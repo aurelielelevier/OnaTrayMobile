@@ -1,30 +1,60 @@
 import React, { useState, useEffect } from 'react';
 import { AsyncStorage, StyleSheet, Text, View, TouchableHighlight, Modal, Alert, ImageBackground, TextInput} from 'react-native';
-
+import {connect} from 'react-redux'
 import {Button, Input} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const image = require('../assets/image-carousel-2.jpg');
 
-function HomeScreen({ navigation }) {
+function HomeScreen({ navigation, onLogin, onSetPseudo }) {
 
-  const [pseudo, setPseudo] = useState('')
+  const [token, setToken] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
   const [valueEmail, setValueEmail] = useState('')
 
   useEffect(() => {
-    AsyncStorage.getItem("pseudo", 
+    AsyncStorage.getItem("token", 
             function(error, data){
-              setPseudo(data);
+              setToken(data);
             });
   }, [])
 
-  async function connection(){
+  useEffect(() => {
+    async function cherche(){
+      if(token){
+        var rawResponse = await fetch("http://169.254.166.147:3000/connect", {
+        method: 'post',
+        body: `token=${token}`
+      })
+      var response = await rawResponse.json()
+      onLogin(response.profil)
+      }
+    }
+    cherche()
+  }, [token])
 
+
+  async function signin() {
+    console.log('coucou')
+    var rawResponse = await fetch("http://169.254.166.147:3000/sign_in", {
+      method: 'post',
+      body: `email=${valueEmail}&password=${valueMotDePasse}`
+    })
+    var response = await rawResponse.json()
+    if(response.profil){
+      onLogin(response.profil)
+      onSetPseudo(response.pseudo)
+      AsyncStorage.setItem("pseudo", response.pseudo)
+      AsyncStorage.setItem("profil", response.profil)
+      navigation.navigate('Rechercher')
+    } else {
+      console.log(response)
+      navigation.navigate('Rechercher')
+    }
   }
 
-  if(pseudo){
+  if(token){
     var affichePseudo = <Text style={styles.text}> Bienvenue {pseudo} </Text>
   } else {
     var affichePseudo = 
@@ -77,7 +107,7 @@ function HomeScreen({ navigation }) {
           <TouchableHighlight
             style={{ ...styles.openButton, backgroundColor: "#fed330" }}
             onPress={() => {
-              setModalVisible(!modalVisible); navigation.navigate('Recherche')
+              setModalVisible(!modalVisible); signin();
             }}
           >
             
@@ -193,4 +223,24 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen;
+function mapDispatchToProps (dispatch) {
+  return {
+      onSetPseudo: function(pseudo){
+        dispatch ({
+          type:'savePseudo', pseudo:pseudo
+        })
+      },
+      onLogin: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+      }
+  }
+
+function mapStateToProps(state) {
+  return { profil : state.profil }
+}
+
+export default connect(
+  mapStateToProps, 
+  null
+)(HomeScreen);

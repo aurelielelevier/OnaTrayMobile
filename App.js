@@ -1,21 +1,27 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
 import { AntDesign } from '@expo/vector-icons'; 
 
 import HomeScreen from './screens/HomeScreen'
 import MonProfil from './screens/MonProfil'
 import Recherche from './screens/Recherche'
+import Favoris from './screens/Favoris'
 
 import {createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 
+import {createStore, combineReducers} from 'redux';
+import {Provider} from 'react-redux';
+import profil from './reducers/profil';
+
+const store = createStore(combineReducers({profil}));
 
 var BottomNavigator = createBottomTabNavigator({
-  Profil: MonProfil,
-  Recherche: Recherche,
+  'Mon Profil': MonProfil,
+  Rechercher: Recherche,
+  'Mes favoris': Favoris,
   Messagerie: HomeScreen
 },
 
@@ -23,10 +29,12 @@ var BottomNavigator = createBottomTabNavigator({
   defaultNavigationOptions: ({ navigation }) => ({
     tabBarIcon: ({ tintColor }) => {
       var iconName;
-      if (navigation.state.routeName == 'Profil') {
+      if (navigation.state.routeName == 'Mon Profil') {
         iconName = 'user';
-      } else if (navigation.state.routeName == 'Recherche') {
+      } else if (navigation.state.routeName == 'Rechercher') {
         iconName = 'search1';
+      } else if (navigation.state.routeName == 'Mes favoris') {
+        iconName = 'hearto';
       } else if (navigation.state.routeName == 'Messagerie') {
         iconName = 'wechat';
       }
@@ -56,9 +64,9 @@ const Navigation = createAppContainer(StackNavigator);
 
 export default function App() {
   return (
-    
-      <Navigation/>
-    
+    <Provider store={store}>
+      <Navigation />
+    </Provider>
   );
 }
 
