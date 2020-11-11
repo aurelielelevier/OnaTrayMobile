@@ -6,47 +6,49 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const image = require('../assets/image-carousel-2.jpg');
 
-function HomeScreen({ navigation, onLogin, onSetPseudo }) {
+function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, onLogin }) {
 
   const [token, setToken] = useState('')
+  const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
   const [valueEmail, setValueEmail] = useState('')
 
-  useEffect(() => {
-    AsyncStorage.getItem("token", 
-            function(error, data){
-              setToken(data);
-            });
+  useEffect( () => {
+    console.log(profil)
+    // AsyncStorage.getItem("token", 
+    //         function(error, data){
+    //           setToken(data);
+    //         });
+    // if(profil){
+    //   var rawResponse = await fetch("http://192.168.1.7:3000/connect", {
+    //   method: 'POST',
+    //   headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    //   body: `token=${profil.token}`
+    // })
+    //   var response = await rawResponse.json()
+    //   setProfil(response.profil)
+    //   onSetPseudo(response.pseudo)
+    //   onLogin(response.profil)
+    //   AsyncStorage.setItem("pseudo", response.pseudo)
+    //   AsyncStorage.setItem("profil", response.profil)
+   // }
   }, [])
-
-  useEffect(() => {
-    async function cherche(){
-      if(token){
-        var rawResponse = await fetch("http://169.254.166.147:3000/connect", {
-        method: 'post',
-        body: `token=${token}`
-      })
-      var response = await rawResponse.json()
-      onLogin(response.profil)
-      }
-    }
-    cherche()
-  }, [token])
 
 
   async function signin() {
-    console.log('coucou')
-    var rawResponse = await fetch("http://169.254.166.147:3000/sign_in", {
-      method: 'post',
+    var rawResponse = await fetch("http://192.168.1.7:3000/sign_in", {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `email=${valueEmail}&password=${valueMotDePasse}`
     })
     var response = await rawResponse.json()
     if(response.profil){
       onLogin(response.profil)
       onSetPseudo(response.pseudo)
-      AsyncStorage.setItem("pseudo", response.pseudo)
-      AsyncStorage.setItem("profil", response.profil)
+      // AsyncStorage.setItem("pseudo", response.pseudo)
+      // AsyncStorage.setItem("profil", response.profil)
+      console.log(response)
       navigation.navigate('Rechercher')
     } else {
       console.log(response)
@@ -54,10 +56,20 @@ function HomeScreen({ navigation, onLogin, onSetPseudo }) {
     }
   }
 
-  if(token){
-    var affichePseudo = <Text style={styles.text}> Bienvenue {pseudo} </Text>
+  if(profil){
+    var affichage = <View>
+                          <Text style={styles.text}> Bienvenue {pseudoToDisplay} </Text>
+                          <Text > Bienvenue </Text>
+                          <TouchableHighlight
+                              style={{ ...styles.openButton, backgroundColor: "#fed330", height:40, marginBottom:30}}
+                              onPress={() => {navigation.navigate('Rechercher')}}
+                            >
+                            <Text style={styles.textStyle}>Je commence</Text>
+                          </TouchableHighlight>
+                        </View>
+
   } else {
-    var affichePseudo = 
+    var affichage = 
     <View style={styles.centeredView}>
       <Modal
         animationType="slide"
@@ -83,6 +95,7 @@ function HomeScreen({ navigation, onLogin, onSetPseudo }) {
                 onChangeText={email => setValueEmail(email)}
                 value={valueEmail}
                 placeholder='Email'
+                autoCapitalize='none'
               />
             </View>
             <View style={{flexDirection:'row', marginTop:30}}>
@@ -148,7 +161,7 @@ function HomeScreen({ navigation, onLogin, onSetPseudo }) {
       <View style={{flex:3}}>
         <Text style={styles.titre}>On A Tray</Text>
         
-        {affichePseudo}
+        {affichage}
         
       </View>
       
@@ -178,7 +191,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   titre:{
-    flex:1,
+    flex:4,
     color:'#4b6584',
     fontSize:60,
     fontWeight: 'bold',
@@ -237,10 +250,10 @@ function mapDispatchToProps (dispatch) {
   }
 
 function mapStateToProps(state) {
-  return { profil : state.profil }
+  return { profilToDisplay: state.profil, pseudoToDisplay: state.pseudo}
 }
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(HomeScreen);
