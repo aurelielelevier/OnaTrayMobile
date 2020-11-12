@@ -5,7 +5,12 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 function HeaderBar(props){
     return (
         <Header
-                leftComponent={{ icon: 'menu', color: '#4b6584' }}
+                leftComponent={
+                  <Icon 
+                    name={props.menu} 
+                    color='#4b6584'
+                    size={24} 
+                    onPress={()=>{props.afficheMenu()}}/>}
                 centerComponent={{ text: `${props.page}`, style: { color: '#4b6584', fontSize:20, fontWeight:'bold' } }}
                 rightComponent={
                   <Icon 

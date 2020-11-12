@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, View, Image, ActivityIndicator} from 'react-native';
+import { StyleSheet, ScrollView, Text, View, ActivityIndicator, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {connect} from 'react-redux'
-import { Divider, Button, Overlay, Badge } from 'react-native-elements';
+import { Divider, Button, Overlay } from 'react-native-elements';
 import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
 
-function CardRestaurant({navigation, profilToDisplay, resto}) {
-  
+function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
   const [whishlist, setWhishlist] = useState(profilToDisplay.wishlistTalent)
-  const [coeur, setCoeur] = useState(whishlist.includes(resto._id) ? 'heart' : 'heart-o' )
+  const [coeur, setCoeur] = useState(isInwhislist())
   const [visible, setVisible] = useState(false);
-  const polygone = []
 
+  function isInwhislist(){
+      var result = 'heart-o'
+      for(var i=0; i<whishlist.length; i++){
+          if(whishlist[i]._id === resto._id){
+              result = 'heart'
+          }
+      }
+      return result
+  }
+
+  const polygone = []
   for(var i=0; i<profilToDisplay.perimetre.length; i++){
         polygone.push({latitude:profilToDisplay.perimetre[i][1], longitude:profilToDisplay.perimetre[i][0]})
     }
@@ -24,9 +33,10 @@ function CardRestaurant({navigation, profilToDisplay, resto}) {
         body: `token=${profilToDisplay.token}&id=${resto._id}`
         })  
         var response = await rawresponse.json()
+        onChangeProfil(response.profil)
     }
     function changementCoeur(coeur){
-        if(coeur==='heart'){
+        if(coeur ==='heart'){
             return('heart-o')
         } else {
             return('heart')
@@ -78,31 +88,20 @@ function CardRestaurant({navigation, profilToDisplay, resto}) {
     } else {
         var prix = '--'
     }
-
-  return (
     
-    <View 
-        style={{ paddingHorizontal:10}}>
-        
-
-        <Image
-            source={{ uri: resto.photo }}
-            style={{ width: '100%', height:'30%', marginTop:5}}
-            PlaceholderContent={<ActivityIndicator />}
-        />
-
-        <View >
-            <Overlay 
+  return (
+      <View>
+          <Overlay 
                 isVisible={visible}
-                overlayStyle={{flex:3, width:'90%'}}
+                overlayStyle={{flex:1, width:'90%'}}
             >
+              <View style={{flex:1, margin:30}}>
                 <Text style={styles.titreOverlay}>{resto.name}</Text>
                 <View style={{flex:2}}>
                     <Image
                         source={{ uri: resto.photo }}
                         style={{ width: '100%', height:100, marginTop:5}}
                         PlaceholderContent={<ActivityIndicator />}
-                        
                     />
                 </View>
                 <View style={{flex:1, padding:20}}>
@@ -205,18 +204,33 @@ function CardRestaurant({navigation, profilToDisplay, resto}) {
                     buttonStyle={{backgroundColor:'#fed330', margin:20}}
                     titleStyle={{color:'#4b6584'}}
                     title='OK'/>
+              </View>
             </Overlay>
             
-            <Text style={styles.titre}>{resto.name}</Text>
+      
+        <ScrollView >
+            <Image
+                source={{ uri: resto.photo }}
+                style={{ width: '100%',  marginTop:5, borderRadius:10}}
+            />     
+            <View style={{ backgroundColor:'#d1d8e0', borderRadius:10, margin:10,border:'1px solid black'}}>
+            
+                <Image
+                        source={{ uri: resto.photo }}
+                        style={{ height:100, width: '100%',  marginTop:5, borderRadius:10}}
+                    />   
+                <View style={{flex:1}}>
+            
+                <Text style={styles.titre}>{resto.name}</Text>
         
-            <View
-                style={{
-                flexDirection: "row",
-                flex:1,
-                paddingHorizontal: 10,
-                }}
-            >
-                <View style={{ flex: 0.5 }} >
+                <View
+                    style={{
+                    flexDirection: "row",
+                    flex:1,
+                    paddingHorizontal: 10,
+                    }}
+                >
+                <View style={{ flex: 5 }} >
                     
                     <Text style={styles.desciptif}>
                         <Icon
@@ -259,7 +273,7 @@ function CardRestaurant({navigation, profilToDisplay, resto}) {
                     </Text>
                 </View>
                 
-                <View style={{  flex: 0.4}} >
+                <View style={{  flex: 4}} >
                     <Text style={styles.desciptif}> <Icon
                             name='cutlery'
                             size={12}
@@ -286,7 +300,7 @@ function CardRestaurant({navigation, profilToDisplay, resto}) {
                         {` ${ambiance}`} </Text>
                 </View>
 
-                <View style={{  flex: 0.2}} >
+                <View style={{  flex: 2}} >
                     <Text style={{...styles.desciptif}, {textAlign:'center'}}>{prix}</Text>
                     <Icon
                         name={coeur}
@@ -306,12 +320,13 @@ function CardRestaurant({navigation, profilToDisplay, resto}) {
                         onPress={()=>{setVisible(true)}}
                         />
                 </View>
-                <Divider/>
                 
             </View>
-
-    </View>
     
+            </View>
+    
+        </ScrollView>
+    </View>
   );
 }
 
@@ -333,6 +348,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4b6584',
   },
   titre:{
+    flex:1,
     textAlign:'center',
     color:'#4b6584',
     fontWeight:'bold',
@@ -349,6 +365,7 @@ const styles = StyleSheet.create({
     textAlign:'left',
     color:'#4b6584',
     fontSize:18,
+    textAlign:'center',
   },
   titreOverlay:{
     textAlign:'center',
@@ -360,11 +377,19 @@ const styles = StyleSheet.create({
   },
 });
 
+function mapDispatchToProps (dispatch) {
+    return {
+        onChangeProfil: function(profil){
+            dispatch({type:'addProfil', profil:profil})
+        }
+    }
+}
+
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
 }
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(CardRestaurant);

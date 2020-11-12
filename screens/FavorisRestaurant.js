@@ -1,21 +1,14 @@
 import React from 'react';
 import { StyleSheet, ScrollView, Text, View} from 'react-native';
-import {Header} from 'react-native-elements'
+import HeaderBar from '../components/HeaderBar'
 
-export default function Favoris( ) {
+export default function Favoris() {
+  
   return (
     <View>
-      <Header
-        leftComponent={{ icon: 'menu', color: '#fff' }}
-        centerComponent={{ text: 'MY TITLE', style: { color: '#fff' } }}
-        rightComponent={{ icon: 'home', color: '#fff' }}
-        containerStyle={{
-          backgroundColor: '#4b6584',
-          justifyContent: 'space-around',
-        }}
-      />
+      <HeaderBar page='Mes favoris'/>
       <ScrollView style={{marginTop: 20}}>
-        <Text>ON a mjlkjh lkjg yguy uy kuyf kjhfgk jhf kuyf</Text>
+        <Text></Text>
       </ScrollView>
     </View>
     

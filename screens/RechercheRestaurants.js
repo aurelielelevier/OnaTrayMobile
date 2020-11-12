@@ -49,19 +49,18 @@ const cuisine = itemsCuisine.map(item => item.name)
 const prix = itemsPrix.map(item => item.id)
 const clientele = itemsClientele.map(item => item.name)
 
-function Recherche({navigation, profilToDisplay}) {
+function Recherche({onChangeProfil, profilToDisplay}) {
   const [liste, setListe] = useState([])
   const [profil, setProfil] = useState(profilToDisplay)
-  const [whishlist, setWishlist] = useState([])
+  const [visibleOverlay, setVisibleOverlay] = useState(false)
   const [selectedItemsClientele, setSelectedItemsClientele] = useState(clientele);
   const [selectedItemsAmbiance, setSelectedItemsAmbiance] = useState(ambiance);
   const [selectedItemsCuisine, setSelectedItemsCuisine] = useState(cuisine);
   const [selectedItemsPrix, setSelectedItemsPrix] = useState(prix);
   const [zone, setZone] = useState(zoneFrance);
-  const [texteZone, setTexteZone] = useState('Ne montrer que les restaurants dans ma zone')
+  const [texteZone, setTexteZone] = useState('Uniquement dans mon périmètre')
   
   const onSelectedItemsCuisineChange = (selectedItems) => {
-    console.log(selectedItems,'selected')
     setSelectedItemsCuisine(selectedItems);
   };
   const onSelectedItemsClienteleChange = (selectedItems) => {
@@ -73,13 +72,15 @@ function Recherche({navigation, profilToDisplay}) {
   const onSelectedItemsPrixChange = (selectedItems) => {
     setSelectedItemsPrix(selectedItems);
   };
-
+  function afficheMenu(){
+    setVisibleOverlay(true)
+  }
   function changeZone(){
-    if(texteZone === 'Ne montrer que les restaurants dans ma zone'){
-      setZone(profilToDisplay.polygone.coordinates[0])
+    if(texteZone === 'Uniquement dans mon périmètre'){
+      setZone(profil.polygone.coordinates[0])
       setTexteZone('Montrer tous les restaurants')
     } else {
-      setTexteZone('Ne montrer que les restaurants dans ma zone')
+      setTexteZone('Uniquement dans mon périmètre')
       setZone(zoneFrance)
     }
   }
@@ -90,18 +91,22 @@ function Recherche({navigation, profilToDisplay}) {
     var rawResponse = await fetch("http://192.168.1.7:3000/talents/recherche-liste-restaurants", {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: `token=${profilToDisplay.token}&restaurant=${criteres}`
+      body: `token=${profil.token}&restaurant=${criteres}`
     })
     var response = await rawResponse.json()
     setListe(response.liste)
+    onChangeProfil(response.profil)
     }
     cherche()
-  }, [profilToDisplay, selectedItemsClientele, selectedItemsAmbiance, selectedItemsCuisine, selectedItemsPrix, zone])
-
+  }, [selectedItemsClientele, selectedItemsAmbiance, selectedItemsCuisine, selectedItemsPrix, zone])
+  
+  useEffect(() => {
+    
+  }, [])
 
   return (
     <View style={{flex:1}} >
-      <HeaderBar page='Recherche des restaurants'/>
+      <HeaderBar page='Voir les restaurants' menu='check-square-o' afficheMenu={afficheMenu} />
       
       <View style={{margin:0}}>
           <MultiSelect
@@ -213,16 +218,18 @@ function Recherche({navigation, profilToDisplay}) {
                     
       </View>
       
-      
-       <ScrollView style={{flex: 1, marginTop: 20, marginBottom:10}}>
+       <ScrollView style={{flex: 1, marginTop: 10, marginBottom:10}}>
+       
          {
           liste.map((resto,i)=> {
             return(
-              <CardRestaurant resto={resto}/>
+              <CardRestaurant key={`${resto}${i}`} resto={resto}/>
             )
           })
          }
+         
       </ScrollView>
+      
     </View>
     
   );
@@ -260,11 +267,18 @@ const styles = StyleSheet.create({
   }
 });
 
+function mapDispatchToProps (dispatch) {
+  return {
+      onChangeProfil: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+      }
+  }
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
 }
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(Recherche);

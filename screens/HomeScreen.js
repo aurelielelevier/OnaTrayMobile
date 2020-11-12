@@ -1,40 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { AsyncStorage, StyleSheet, Text, View, TouchableHighlight, Modal, Alert, ImageBackground, TextInput} from 'react-native';
+import { ActivityIndicator, StyleSheet, Image, Text, View, TouchableHighlight, Modal, Alert, ImageBackground, TextInput} from 'react-native';
 import {connect} from 'react-redux'
 import {Button, Input} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const image = require('../assets/image-carousel-2.jpg');
+const logo = require('../assets/logo-onatray.png');
 
 function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, onLogin }) {
-
-  const [token, setToken] = useState('')
   const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
   const [valueEmail, setValueEmail] = useState('')
-
-  useEffect( () => {
-    console.log(profil)
-    // AsyncStorage.getItem("token", 
-    //         function(error, data){
-    //           setToken(data);
-    //         });
-    // if(profil){
-    //   var rawResponse = await fetch("http://192.168.1.7:3000/connect", {
-    //   method: 'POST',
-    //   headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    //   body: `token=${profil.token}`
-    // })
-    //   var response = await rawResponse.json()
-    //   setProfil(response.profil)
-    //   onSetPseudo(response.pseudo)
-    //   onLogin(response.profil)
-    //   AsyncStorage.setItem("pseudo", response.pseudo)
-    //   AsyncStorage.setItem("profil", response.profil)
-   // }
-  }, [])
-
 
   async function signin() {
     var rawResponse = await fetch("http://192.168.1.7:3000/sign_in", {
@@ -43,36 +20,55 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
       body: `email=${valueEmail}&password=${valueMotDePasse}`
     })
     var response = await rawResponse.json()
-    if(response.profil){
+    console.log('RESPONSE 0000000000', response)
       onLogin(response.profil)
       onSetPseudo(response.pseudo)
+    if(response.type === 'talent'){
       // AsyncStorage.setItem("pseudo", response.pseudo)
       // AsyncStorage.setItem("profil", response.profil)
-      console.log(response)
-      navigation.navigate('Rechercher')
-    } else {
-      console.log(response)
-      navigation.navigate('Rechercher')
-    }
+      navigation.navigate('Restaurants')
+    } else if(response.type === 'restaurant'){
+      navigation.navigate('Talents')
+    } 
+    // else {
+    //   navigation.navigate('Home')
+    // }
   }
 
   if(profil){
-    var affichage = <View>
-                          <Text style={styles.text}> Bienvenue {pseudoToDisplay} </Text>
-                          <Text > Bienvenue </Text>
-                          <TouchableHighlight
-                              style={{ ...styles.openButton, backgroundColor: "#fed330", height:40, marginBottom:30}}
-                              onPress={() => {navigation.navigate('Rechercher')}}
-                            >
-                            <Text style={styles.textStyle}>Je commence</Text>
-                          </TouchableHighlight>
-                        </View>
+    var affichage =   <View style={{flex:1}}>
+                        
+                        <Text style={styles.text}> Bienvenue {pseudoToDisplay} </Text>
+                        <Text > Bienvenue </Text>
+                        <TouchableHighlight
+                            style={{ ...styles.openButton, backgroundColor: "#fed330", height:40, marginBottom:30}}
+                            onPress={() => {navigation.navigate('Rechercher')}}
+                          >
+                          <Text style={styles.textStyle}>Je commence</Text>
+                        </TouchableHighlight>
+                      </View>
 
-  } else {
-    var affichage = 
-    <View style={styles.centeredView}>
-      <Modal
-        animationType="slide"
+  } 
+
+  return (
+    
+    
+    <ImageBackground source={image} style={styles.image}>
+      
+      
+      <View style={{flex:1, alignItems:'center', paddingTop:50}}>
+        <View style={{flex:1}}>
+          <Image  source={logo}
+                  style={{ width: 200, height: 200 }}
+                  PlaceholderContent={<ActivityIndicator />}
+                  />
+        </View>
+        <Text style={styles.sousTitre}>Bienvenue</Text>
+        
+        <View style={styles.centeredView}>
+      <Modal 
+        style={{flex:1, marginBottom:100}}
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => {
@@ -118,20 +114,15 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
           <View style={{flexDirection:'row', marginTop:10}}>
           
           <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: "#fed330" }}
-            onPress={() => {
-              setModalVisible(!modalVisible); signin();
-            }}
+            style={{ ...styles.openButton }}
+            onPress={() => { setModalVisible(!modalVisible); signin()}}
           >
-            
             <Text style={styles.textStyle}>Confirmer</Text>
           </TouchableHighlight>
           
           <TouchableHighlight
-            style={{ ...styles.openButton, backgroundColor: "#fed330" }}
-            onPress={() => {
-              setModalVisible(!modalVisible);
-            }}
+            style={{ ...styles.openButton}}
+            onPress={() => { setModalVisible(!modalVisible)}}
           >
             <Text style={styles.textStyle}>Annuler</Text>
           </TouchableHighlight>
@@ -140,28 +131,17 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
         </View>
       </View>
       </Modal>
-
-      <TouchableHighlight
-        style={styles.openButton}
-        onPress={() => {
-          setModalVisible(true);
-        }}
-      >
-        <Text style={styles.textStyle}>Se connecter</Text>
-      </TouchableHighlight>
-    </View>
-  }
-
-  return (
-    
-    
-    <ImageBackground source={image} style={styles.image}>
+      <View style={{flex:1, width:'50%'}}>
+        <Button 
+          onPress={()=>{setModalVisible(true)}}
+          buttonStyle={styles.button}
+          title='Connexion'
+          titleStyle={{color:'#4b6584'}}
+          color="#4b6584"
+          />
+      </View>
       
-      <View style={{flex:3}}></View>
-      <View style={{flex:3}}>
-        <Text style={styles.titre}>On A Tray</Text>
-        
-        {affichage}
+    </View>
         
       </View>
       
@@ -191,9 +171,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   titre:{
-    flex:4,
+    flex:1,
     color:'#4b6584',
     fontSize:60,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+  },
+  sousTitre:{
+    flex:1,
+    color:'#4b6584',
+    fontSize:40,
     fontWeight: 'bold',
     alignSelf: 'center',
   },
@@ -204,6 +191,7 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 20,
+    marginBottom:200,
     backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
@@ -218,13 +206,19 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   openButton: {
+    flex: 1,
+    height: 35,
+    alignItems:'center',
+    textAlign:'center',
     backgroundColor: "#fed330",
     borderRadius: 20,
-    padding: 10,
-    elevation: 2
+    padding:10,
+    margin:10,
+    
+    //elevation: 2
   },
   textStyle: {
-    color: "white",
+    color: "#4b6584",
     fontWeight: "bold",
     textAlign: "center"
   },
@@ -233,6 +227,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color:'#4b6584',
     fontSize:20
+  },
+  button:{
+    backgroundColor:'#fed330',
+    borderRadius:10,
+   
   }
 });
 

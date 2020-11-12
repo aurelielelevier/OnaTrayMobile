@@ -3,10 +3,14 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 
-import HomeScreen from './screens/HomeScreen'
-import MonProfil from './screens/MonProfil'
-import Recherche from './screens/Recherche'
-import Favoris from './screens/Favoris'
+import HomeScreen from './screens/HomeScreen';
+import MonProfilTalent from './screens/MonProfilTalent';
+import RechercheRestaurant from './screens/RechercheRestaurants';
+import Favoris from './screens/FavorisTalents';
+import MonProfilRestaurant from './screens/MonProfilRestaurant';
+import RechercheTalents from './screens/RechercheTalents';
+import FavorisRestaurant from './screens/FavorisRestaurant';
+
 
 import {createAppContainer } from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
@@ -18,10 +22,10 @@ import profil from './reducers/profil';
 
 const store = createStore(combineReducers({profil}));
 
-var BottomNavigator = createBottomTabNavigator({
-  'Mon Profil': MonProfil,
-  Rechercher: Recherche,
-  'Mes favoris': Favoris,
+var BottomNavigatorTalent = createBottomTabNavigator({
+  'Mon Profil': MonProfilTalent,
+  Restaurants: RechercheRestaurant,
+  Favoris: Favoris,
   Messagerie: HomeScreen
 },
 
@@ -31,17 +35,54 @@ var BottomNavigator = createBottomTabNavigator({
       var iconName;
       if (navigation.state.routeName == 'Mon Profil') {
         iconName = 'user';
-      } else if (navigation.state.routeName == 'Rechercher') {
+      } else if (navigation.state.routeName == 'Restaurants') {
+        iconName = 'search1';
+      } else if (navigation.state.routeName == 'Favoris') {
+        iconName = 'hearto';
+      } else if (navigation.state.routeName == 'Messagerie') {
+        iconName = 'wechat';
+      } 
+
+      return <AntDesign name={iconName} size={25} color={tintColor} />;
+    },
+  }),
+  
+  tabBarOptions: {
+    activeTintColor: 'black',
+    inactiveTintColor: '#4b6584',
+    style: {
+      backgroundColor: '#fed330',
+    }
+  }  
+
+}
+);
+
+var BottomNavigatorRestaurant = createBottomTabNavigator({
+  'Mon Profil': MonProfilRestaurant,
+  Talents: RechercheTalents,
+  'Mes favoris': FavorisRestaurant,
+  Messagerie: HomeScreen
+},
+
+{
+  defaultNavigationOptions: ({ navigation }) => ({
+    tabBarIcon: ({ tintColor }) => {
+      var iconName;
+      if (navigation.state.routeName == 'Mon Profil') {
+        iconName = 'user';
+      } else if (navigation.state.routeName == 'Talents') {
         iconName = 'search1';
       } else if (navigation.state.routeName == 'Mes favoris') {
         iconName = 'hearto';
       } else if (navigation.state.routeName == 'Messagerie') {
         iconName = 'wechat';
-      }
+      } 
 
       return <AntDesign name={iconName} size={25} color={tintColor} />;
     },
   }),
+  
   tabBarOptions: {
     activeTintColor: 'black',
     inactiveTintColor: '#4b6584',
@@ -55,7 +96,9 @@ var BottomNavigator = createBottomTabNavigator({
 
 StackNavigator = createStackNavigator({
   Home: HomeScreen,  
-  BottomNavigator: BottomNavigator
+  BottomNavigatorRestaurant: BottomNavigatorRestaurant,
+  BottomNavigatorTalent: BottomNavigatorTalent,
+  
 }, 
 {headerMode: 'none'}
 );  
