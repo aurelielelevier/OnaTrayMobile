@@ -53,10 +53,8 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
 
   return (
     
-    
-    <ImageBackground source={image} style={styles.image}>
       
-      
+      <>
       <View style={{flex:1, alignItems:'center', paddingTop:50}}>
         <View style={{flex:1}}>
           <Image  source={logo}
@@ -132,7 +130,6 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
         </View>
       </View>
       </Modal>
-      
       <View style={{flex:1, width:'50%'}}>
         <Button 
           onPress={()=>{setModalVisible(true)}}
@@ -141,33 +138,13 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
           titleStyle={{color:'#4b6584'}}
           color="#4b6584"
           />
-        </View>
-        <View style={{flex:2, width:'80%'}}>
-          <Text style={{ alignSelf:'center', marginBottom:30}}>ou je souhaite m'inscrire en tant que :</Text>
-          <View style={{flexDirection:'row'}}>
-            <Button 
-              onPress={()=>{navigation.navigate('SignUpTalent')}}
-              buttonStyle={styles.button}
-              title='Talent'
-              titleStyle={{color:'#4b6584'}}
-              color="#4b6584"
-            />
-              <Button 
-              onPress={()=>{navigation.navigate('SignUpRestaurant')}}
-              buttonStyle={styles.button}
-              title='Restaurant'
-              titleStyle={{color:'#4b6584'}}
-              color="#4b6584"
-            />
-
-          </View>
       </View>
       
     </View>
         
-      </View>
+    </View>
       
-    </ImageBackground>
+    </>
     
   );
 }
@@ -253,7 +230,7 @@ const styles = StyleSheet.create({
   button:{
     backgroundColor:'#fed330',
     borderRadius:10,
-    marginHorizontal:20
+   
   }
 });
 

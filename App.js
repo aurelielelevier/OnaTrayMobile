@@ -10,6 +10,9 @@ import Favoris from './screens/FavorisTalents';
 import MonProfilRestaurant from './screens/MonProfilRestaurant';
 import RechercheTalents from './screens/RechercheTalents';
 import FavorisRestaurant from './screens/FavorisRestaurant';
+import SignUpRestaurant from './screens/SignUpScreenRestaurant';
+import SignUpTalent from './screens/SignUpScreenTalent';
+import SignUpTalent2 from './screens/SignUpScreenTalent2';
 
 
 import {createAppContainer } from 'react-navigation';
@@ -99,9 +102,11 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
 
 StackNavigator = createStackNavigator({
   Home: HomeScreen,  
+  SignUpTalent: SignUpTalent,
+  SignUpTalent2: SignUpTalent2,
+  SignUpRestaurant: SignUpRestaurant,
   BottomNavigatorRestaurant: BottomNavigatorRestaurant,
   BottomNavigatorTalent: BottomNavigatorTalent,
-  
 }, 
 {headerMode: 'none'}
 );  

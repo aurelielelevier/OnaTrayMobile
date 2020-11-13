@@ -74,7 +74,6 @@ function Recherche({onChangeProfil, profilToDisplay}) {
     setSelectedItemsPrix(selectedItems);
   };
   function afficheMenu(){
-    console.log('COUCOU MODAL')
     setVisibleModal(true)
   }
   function changeZone(){
@@ -102,9 +101,6 @@ function Recherche({onChangeProfil, profilToDisplay}) {
     cherche()
   }, [selectedItemsClientele, selectedItemsAmbiance, selectedItemsCuisine, selectedItemsPrix, zone])
   
-  useEffect(() => {
-    
-  }, [])
 
   return (
     <View style={{flex:1}} >

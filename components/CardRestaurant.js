@@ -95,7 +95,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                 isVisible={visible}
                 overlayStyle={{flex:1, width:'90%'}}
             >
-              <View style={{flex:1, margin:30}}>
+              <View style={{flex:1, margin:20}}>
                 <Text style={styles.titreOverlay}>{resto.name}</Text>
                 <View style={{flex:2}}>
                     <Image
@@ -104,7 +104,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                         PlaceholderContent={<ActivityIndicator />}
                     />
                 </View>
-                <View style={{flex:1, padding:20}}>
+                <View style={{flex:1, padding:10}}>
                     <Text style={{...styles.desciptifOverlay}, {textAlign:'center'}}>{prix}</Text>
                     
                     <Text style={styles.desciptifOverlay}><Icon
@@ -135,7 +135,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                     
                 </View>
                 
-                <MapView style={{flex : 4}}
+                <MapView style={{flex : 4, borderRadius:10, width:'100%'}}
                     initialRegion={{
                     latitude: resto.adresselgtlat.coordinates[1],
                     longitude: resto.adresselgtlat.coordinates[0],
