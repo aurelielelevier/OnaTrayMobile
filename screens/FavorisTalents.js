@@ -20,7 +20,7 @@ function FavorisTalents({profilToDisplay}) {
   return (
     
     <View style={{flex:1}}>
-      <HeaderBar page='Mes favoris' menu=''/>
+      <HeaderBar page='Mes favoris'/>
       <View style={{flex:1}}>
         <ScrollView style={{flex: 1, marginTop: 20, marginBottom:10}}>
           <View style={{flex:1}}>

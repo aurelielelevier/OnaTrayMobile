@@ -26,11 +26,12 @@ var BottomNavigatorTalent = createBottomTabNavigator({
   'Mon Profil': MonProfilTalent,
   Restaurants: RechercheRestaurant,
   Favoris: Favoris,
-  Messagerie: HomeScreen
+  Messagerie: HomeScreen,
 },
 
 {
   defaultNavigationOptions: ({ navigation }) => ({
+
     tabBarIcon: ({ tintColor }) => {
       var iconName;
       if (navigation.state.routeName == 'Mon Profil') {
@@ -38,7 +39,7 @@ var BottomNavigatorTalent = createBottomTabNavigator({
       } else if (navigation.state.routeName == 'Restaurants') {
         iconName = 'search1';
       } else if (navigation.state.routeName == 'Favoris') {
-        iconName = 'hearto';
+        iconName = 'heart';
       } else if (navigation.state.routeName == 'Messagerie') {
         iconName = 'wechat';
       } 
@@ -48,8 +49,8 @@ var BottomNavigatorTalent = createBottomTabNavigator({
   }),
   
   tabBarOptions: {
-    activeTintColor: 'black',
-    inactiveTintColor: '#4b6584',
+    activeTintColor: '#4b6584',
+    inactiveTintColor: '#a5b1c2',
     style: {
       backgroundColor: '#fed330',
     }
@@ -81,11 +82,13 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
 
       return <AntDesign name={iconName} size={25} color={tintColor} />;
     },
+    
   }),
   
   tabBarOptions: {
-    activeTintColor: 'black',
-    inactiveTintColor: '#4b6584',
+    activeTintColor: '#4b6584',
+    inactiveTintColor: '#a5b1c2',
+  
     style: {
       backgroundColor: '#fed330',
     }

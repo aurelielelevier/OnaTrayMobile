@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View} from 'react-native';
-import { Button } from 'react-native-elements';
+import { StyleSheet, ScrollView, View, Text} from 'react-native';
+import { Button, Overlay, Header } from 'react-native-elements';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import {connect} from 'react-redux'
 import MultiSelect from 'react-native-multiple-select';
 import CardRestaurant from '../components/CardRestaurant';
@@ -52,7 +53,7 @@ const clientele = itemsClientele.map(item => item.name)
 function Recherche({onChangeProfil, profilToDisplay}) {
   const [liste, setListe] = useState([])
   const [profil, setProfil] = useState(profilToDisplay)
-  const [visibleOverlay, setVisibleOverlay] = useState(false)
+  const [visibleModal, setVisibleModal] = useState(false)
   const [selectedItemsClientele, setSelectedItemsClientele] = useState(clientele);
   const [selectedItemsAmbiance, setSelectedItemsAmbiance] = useState(ambiance);
   const [selectedItemsCuisine, setSelectedItemsCuisine] = useState(cuisine);
@@ -73,7 +74,8 @@ function Recherche({onChangeProfil, profilToDisplay}) {
     setSelectedItemsPrix(selectedItems);
   };
   function afficheMenu(){
-    setVisibleOverlay(true)
+    console.log('COUCOU MODAL')
+    setVisibleModal(true)
   }
   function changeZone(){
     if(texteZone === 'Uniquement dans mon périmètre'){
@@ -106,9 +108,50 @@ function Recherche({onChangeProfil, profilToDisplay}) {
 
   return (
     <View style={{flex:1}} >
-      <HeaderBar page='Voir les restaurants' menu='check-square-o' afficheMenu={afficheMenu} />
-      
-      <View style={{margin:0}}>
+      <Header
+                leftComponent={
+                  <Icon 
+                    name='check' 
+                    color='#4b6584'
+                    size={24}
+                    onPress={()=>{afficheMenu()}}/>}
+                centerComponent={{ text: `Les restaurants`, style: { color: '#4b6584', fontSize:20, fontWeight:'bold' } }}
+                rightComponent={
+                  <Icon 
+                    name='power-off' 
+                    size={24}
+                    color='#4b6584' />
+                  }
+                  containerStyle={{
+                    backgroundColor: '#fed330',
+                    justifyContent: 'space-around',
+                }}
+              />
+      <Button 
+        onPress={()=>{changeZone()}}
+        buttonStyle={{backgroundColor:'#fed330', margin:20, marginBottom:0, borderRadius:10}}
+        title={texteZone}
+        titleStyle={{color:'#4b6584'}}
+        color="#4b6584"
+        />
+      <Overlay isVisible={visibleModal} overlayStyle={{flex:0.8, width:'80%'}}>
+        <>
+        <View style={{margin:0}}>
+          <Button 
+            onPress={()=>{{ setVisibleModal(false); 
+                            setSelectedItemsClientele(clientele);
+                            setSelectedItemsAmbiance(ambiance);
+                            setSelectedItemsCuisine(cuisine);
+                            setSelectedItemsPrix(prix)}
+                          }
+                    }
+            buttonStyle={{backgroundColor:'#fed330', marginLeft:20, marginRight:20, borderRadius:10}}
+            title='Tous les restaurants'
+            titleStyle={{color:'#4b6584'}}
+            color="#4b6584"
+            />
+          <Text style={{margin:10, textAlign:"center"}}>ou</Text>
+          <Text style={{margin:10, textAlign:'center'}}>Veuillez choisir vos critères de tri :</Text>
           <MultiSelect
             hideTags
             hideSubmitButton={true}
@@ -208,16 +251,21 @@ function Recherche({onChangeProfil, profilToDisplay}) {
             styleDropdownMenuSubsection={{backgroundColor:'#4b6584'}}
             styleTextDropdownSelected={{color:'#FFFFFF', marginLeft:10}}
           />
+          
           <Button 
-                    onPress={()=>{changeZone()}}
-                    buttonStyle={{backgroundColor:'#fed330', marginLeft:20, marginRight:20, borderRadius:10}}
-                    title={texteZone}
-                    titleStyle={{color:'#4b6584'}}
-                    color="#4b6584"
-                    />
-                    
+            onPress={()=>{setVisibleModal(false)}}
+            buttonStyle={{backgroundColor:'#fed330', marginLeft:20, marginRight:20, borderRadius:10}}
+            title='Valider'
+            titleStyle={{color:'#4b6584'}}
+            color="#4b6584"
+            />    
       </View>
       
+          
+        </>
+        
+      </Overlay>
+     
        <ScrollView style={{flex: 1, marginTop: 10, marginBottom:10}}>
        
          {

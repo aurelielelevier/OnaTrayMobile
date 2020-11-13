@@ -102,7 +102,7 @@ function MonProfil({profilToDisplay}) {
   
   return (
     <Divider style={styles.container}>
-      <HeaderBar page='Mon profil' menu=''/>
+      <HeaderBar page='Mon profil'/>
       <Overlay 
           isVisible={visible}
           overlayStyle={{flex:flexOverlay, width:'90%'}}>

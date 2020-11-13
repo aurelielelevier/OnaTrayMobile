@@ -8,6 +8,7 @@ const image = require('../assets/image-carousel-2.jpg');
 const logo = require('../assets/logo-onatray.png');
 
 function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, onLogin }) {
+  
   const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
