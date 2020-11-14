@@ -5,10 +5,11 @@ import {Button, Overlay} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderBar from '../components/HeaderBar';
 
+const adresseIP = '192.168.1.13'
 const image = require('../assets/image-carousel-2.jpg');
 const logo = require('../assets/logo-onatray.png');
 
-function HomeScreen({navigation, onLogin }) {
+function SignUpScreenTalent ({navigation, onLogin }) {
   
   const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
@@ -20,7 +21,7 @@ function HomeScreen({navigation, onLogin }) {
   const [prenom, setPrenom] = useState('')
   const [telephone, setTelephone] = useState('')
   const [texteModal, setTexteModal] = useState('')
-
+  
   async function valider() {
     var validation = false
     if(valueEmail === valueEmail2 && valueEmail){
@@ -36,7 +37,8 @@ function HomeScreen({navigation, onLogin }) {
     }
     
     if(validation){
-      var rawResponse = await fetch("http://192.168.1.7:3000/talents/createAccount", {
+      console.log('COUCOU')
+      var rawResponse = await fetch(`http://${adresseIP}:3000/talents/createAccount`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `email=${valueEmail}&password=${valueMotDePasse}&firstName=${prenom}&lastName=${nom}&phone=${telephone}`
@@ -194,11 +196,6 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps (dispatch) {
   return {
-      onSetPseudo: function(pseudo){
-        dispatch ({
-          type:'savePseudo', pseudo:pseudo
-        })
-      },
       onLogin: function(profil){
           dispatch({type:'addProfil', profil:profil})
       }
@@ -212,4 +209,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps, 
   mapDispatchToProps
-)(HomeScreen);
+)(SignUpScreenTalent);

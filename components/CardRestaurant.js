@@ -5,6 +5,7 @@ import {connect} from 'react-redux'
 import { Divider, Button, Overlay } from 'react-native-elements';
 import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
+const adresseIP = '192.168.1.13'
 
 function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
   const [whishlist, setWhishlist] = useState(profilToDisplay.wishlistTalent)
@@ -27,7 +28,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
     }
 
     async function changementWhishlist(){
-        var rawresponse = await fetch("http://192.168.1.7:3000/talents/whishlist", {
+        var rawresponse = await fetch(`http://${adresseIP}:3000/talents/whishlist`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `token=${profilToDisplay.token}&id=${resto._id}`

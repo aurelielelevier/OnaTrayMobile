@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Image, Text, View, KeyboardAvoidingView, Modal, Alert, ImageBackground, TextInput} from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TextInput} from 'react-native';
 import {connect} from 'react-redux'
 import {Button, CheckBox} from 'react-native-elements'
 import MultiSelect from 'react-native-multiple-select';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderBar from '../components/HeaderBar';
-
-const image = require('../assets/image-carousel-2.jpg');
-const logo = require('../assets/logo-onatray.png');
+const adresseIP = '192.168.1.13'
 
 const itemsPostes = [{id: 'Voiturier', name: 'Voiturier'}, 
                         {id: 'Serveur', name: 'Serveur'}, 
@@ -35,13 +32,11 @@ const itemsContrats = [{id: 'CDI', name: 'CDI'},
                         {id: 'CDD', name: 'CDD'}, 
                         {id: 'Extra', name: 'Extra'}, 
 ];
-const enPoste = ['Oui', 'Non'];
-const enRecherche =['Oui', 'Non']
 
-function HomeScreen({profilToDisplay}) {
+function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
   
-  const [enPosteChoix, setEnPosteChoix] = useState('Oui')
-  const [enRechercheChoix, setEnrechercheChoix]= useState('Oui')
+  const [enPosteChoix, setEnPosteChoix] = useState(true)
+  const [enRechercheChoix, setEnrechercheChoix]= useState(true)
   const [villeFormation, setVilleFormation] = useState('')
   const [ecole, setEcole] = useState('')
   const [anneeFormation, setAnneeFormation] = useState('')
@@ -69,14 +64,14 @@ function HomeScreen({profilToDisplay}) {
   async function valider() {
     var formation = JSON.stringify([{school: ecole, city:villeFormation, year:anneeFormation, diploma:diplome}])
     var experience = JSON.stringify([{firm: entreprise, city:villeExperience, job: posteOccupe, rangeDate:[débutExperience, finExperience]}])
-    var rawResponse = await fetch("http://192.168.1.7:3000/talents/informations", {
+    var rawResponse = await fetch(`http://${adresseIP}:3000/talents/informations`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: `token=${profilToDisplay.tokenToDisplay}&recherche=${enRecherche}&poste=${enPoste}&langage=${JSON.stringify(langues)}&job=${JSON.stringify(jobChoosen)}&experience=${experience}&formation=${formation}&contrat=${JSON.stringify(contrats)}`
+      body: `token=${profilToDisplay.token}&recherche=${enRechercheChoix}&poste=${enPosteChoix}&langage=${JSON.stringify(langues)}&job=${JSON.stringify(jobChoosen)}&experience=${experience}&formation=${formation}&contrat=${JSON.stringify(contrats)}`
     })
-    var response = await rawResponse.json()
+    var profilAjour = await rawResponse.json()
+    onLogin(profilAjour)
   }
-
 
   return (
     <View style={{flex:1}}>
@@ -235,49 +230,55 @@ function HomeScreen({profilToDisplay}) {
                 </View>
                 <View style={styles.lignes}>
                   <Text style={styles.text}>Vous êtes en poste</Text>
-                  {
-                    enPoste.map((choix,i)=>{
-                      return(
-                        <CheckBox
-                          key={i+choix}
-                          center
-                          title={choix}
-                          color={'red'}
-                          containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
-                          checkedIcon='dot-circle-o'
-                          uncheckedIcon='circle-o'
-                          checked={choix===enPosteChoix?true:false}
-                          onPress={()=>{{setEnPosteChoix(choix==='Oui'?true:false)}}}
-                        />
-                      )
-                    })
-                  }
+                  <CheckBox
+                    key='PasEnPoste'
+                    center
+                    title='Oui'
+                    containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
+                    checkedIcon='dot-circle-o'
+                    uncheckedIcon='circle-o'
+                    checked={ enPosteChoix?true:false}
+                    onPress={()=>{setEnPosteChoix(true)}}
+                  />
+                  <CheckBox
+                    key='enPoste'
+                    center
+                    title='Non'
+                    containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
+                    checkedIcon='dot-circle-o'
+                    uncheckedIcon='circle-o'
+                    checked={!enPosteChoix?true:false}
+                    onPress={()=>{setEnPosteChoix(false)}}
+                  />
                 <View style={styles.lignes}>
                   <Text style={styles.text}>Vous êtes en recherche</Text>
-                  {
-                    enRecherche.map((choix,i)=>{
-                      return(
-                        <CheckBox
-                          key={i+choix}
-                          center
-                          title={choix}
-                          color={'red'}
-                          containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
-                          checkedIcon='dot-circle-o'
-                          uncheckedIcon='circle-o'
-                          checked={choix===enRechercheChoix?true:false}
-                          onPress={()=>{{setEnrechercheChoix(choix==='Oui'?true:false)}}}
-                        />
-                      )
-                    })
-                  }
+                  <CheckBox
+                    key='PasEnRecherche'
+                    center
+                    title='Oui'
+                    containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
+                    checkedIcon='dot-circle-o'
+                    uncheckedIcon='circle-o'
+                    checked={ enRechercheChoix?true:false}
+                    onPress={()=>{setEnrechercheChoix(true)}}
+                  />
+                  <CheckBox
+                    key='enRecherche'
+                    center
+                    title='Non'
+                    containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
+                    checkedIcon='dot-circle-o'
+                    uncheckedIcon='circle-o'
+                    checked={!enRechercheChoix?true:false}
+                    onPress={()=>{setEnrechercheChoix(false)}}
+                  />
                 </View>
 
             
                 
                 </View>
                 <Button 
-                    onPress={()=>{valider()}}
+                    onPress={()=>{{valider(); navigation.navigate('SignUpTalent3')}}}
                     buttonStyle={styles.button}
                     title='Valider'
                     titleStyle={{color:'#4b6584'}}
@@ -348,11 +349,6 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps (dispatch) {
   return {
-      onSetPseudo: function(pseudo){
-        dispatch ({
-          type:'savePseudo', pseudo:pseudo
-        })
-      },
       onLogin: function(profil){
           dispatch({type:'addProfil', profil:profil})
       }
@@ -366,4 +362,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps, 
   mapDispatchToProps
-)(HomeScreen);
+)(SignUpScreenTalent2);

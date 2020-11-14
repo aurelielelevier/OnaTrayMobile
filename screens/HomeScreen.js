@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Image, Text, View, TouchableHighlight, Modal, Alert, ImageBackground, TextInput} from 'react-native';
 import {connect} from 'react-redux'
-import {Button, Input} from 'react-native-elements'
+import {Button} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const image = require('../assets/image-carousel-2.jpg');
 const logo = require('../assets/logo-onatray.png');
+const adresseIP='192.168.1.13'
 
-function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, onLogin }) {
+function HomeScreen({navigation, pseudoToDisplay, onSetPseudo, onLogin }) {
   
   const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
@@ -15,7 +16,7 @@ function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, 
   const [valueEmail, setValueEmail] = useState('')
 
   async function signin() {
-    var rawResponse = await fetch("http://192.168.1.7:3000/sign_in", {
+    var rawResponse = await fetch(`http://${adresseIP}:3000/sign_in`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `email=${valueEmail}&password=${valueMotDePasse}`

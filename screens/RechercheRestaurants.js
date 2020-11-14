@@ -6,7 +6,7 @@ import {connect} from 'react-redux'
 import MultiSelect from 'react-native-multiple-select';
 import CardRestaurant from '../components/CardRestaurant';
 import HeaderBar from '../components/HeaderBar';
-
+const adresseIP='192.168.1.13'
 const zoneFrance= [
   [ -5.3173828125, 48.458124202908934 ],
   [ 2.1313476562500004, 51.26170001449684 ],
@@ -89,7 +89,7 @@ function Recherche({onChangeProfil, profilToDisplay}) {
   useEffect(() => {
     var criteres = JSON.stringify({ambiance: selectedItemsAmbiance, cuisine: selectedItemsCuisine, prix: selectedItemsPrix, type:selectedItemsClientele, zone:zone})
     async function cherche (){
-    var rawResponse = await fetch("http://192.168.1.7:3000/talents/recherche-liste-restaurants", {
+    var rawResponse = await fetch(`http://${adresseIP}:3000/talents/recherche-liste-restaurants`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profil.token}&restaurant=${criteres}`
@@ -97,6 +97,7 @@ function Recherche({onChangeProfil, profilToDisplay}) {
     var response = await rawResponse.json()
     setListe(response.liste)
     onChangeProfil(response.profil)
+    console.log(response.profil)
     }
     cherche()
   }, [selectedItemsClientele, selectedItemsAmbiance, selectedItemsCuisine, selectedItemsPrix, zone])

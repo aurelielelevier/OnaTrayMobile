@@ -1,6 +1,5 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { AntDesign } from '@expo/vector-icons'; 
 
 import HomeScreen from './screens/HomeScreen';
@@ -13,6 +12,7 @@ import FavorisRestaurant from './screens/FavorisRestaurant';
 import SignUpRestaurant from './screens/SignUpScreenRestaurant';
 import SignUpTalent from './screens/SignUpScreenTalent';
 import SignUpTalent2 from './screens/SignUpScreenTalent2';
+import SignUpTalent3 from './screens/SignUpScreenTalent3';
 
 
 import {createAppContainer } from 'react-navigation';
@@ -52,8 +52,8 @@ var BottomNavigatorTalent = createBottomTabNavigator({
   }),
   
   tabBarOptions: {
-    activeTintColor: '#4b6584',
-    inactiveTintColor: '#a5b1c2',
+    activeTintColor: '#fc5c65',
+    inactiveTintColor: '#4b6584',
     style: {
       backgroundColor: '#fed330',
     }
@@ -89,8 +89,8 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
   }),
   
   tabBarOptions: {
-    activeTintColor: '#4b6584',
-    inactiveTintColor: '#a5b1c2',
+    activeTintColor: '#fc5c65',
+    inactiveTintColor: '#4b6584',
   
     style: {
       backgroundColor: '#fed330',
@@ -104,6 +104,7 @@ StackNavigator = createStackNavigator({
   Home: HomeScreen,  
   SignUpTalent: SignUpTalent,
   SignUpTalent2: SignUpTalent2,
+  SignUpTalent3: SignUpTalent3,
   SignUpRestaurant: SignUpRestaurant,
   BottomNavigatorRestaurant: BottomNavigatorRestaurant,
   BottomNavigatorTalent: BottomNavigatorTalent,
@@ -124,7 +125,6 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'red',
     alignItems: 'center',
     justifyContent: 'center',
   },

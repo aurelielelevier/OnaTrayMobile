@@ -4,13 +4,15 @@ import {connect} from 'react-redux'
 import HeaderBar from '../components/HeaderBar';
 import CardRestaurant from '../components/CardRestaurant';
 
+const adresseIP = '192.168.1.13'
+
 function FavorisTalents({profilToDisplay}) {
   const [liste, setListe] = useState([])
  
   useEffect(() => {
     console.log('COUCOU !!!!!!!!!!!!!!!!!!!',profilToDisplay.wishlistTalent)
     async function cherche (){
-    var rawResponse = await fetch(`http://192.168.1.7:3000/talents/affiche-whishlist/${profilToDisplay.token}`)
+    var rawResponse = await fetch(`http://${adresseIP}:3000/talents/affiche-whishlist/${profilToDisplay.token}`)
     var response = await rawResponse.json()
     setListe(response)
     }
