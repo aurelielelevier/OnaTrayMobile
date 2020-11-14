@@ -4,6 +4,8 @@ import { StyleSheet, ScrollView,Picker, Text, View, SegmentedControlIOS} from 'r
 import { CheckBox } from 'react-native-elements'
 import HeaderBar from '../components/HeaderBar'
 import CardTalent from '../components/CardTalent';
+import { withNavigationFocus } from 'react-navigation';
+import adresseIP from '../adresseIP';
 
 const metiers = ['Voiturier', 'Serveur', 'Garçon de café', 'Plongeur', 'Runner', 'Sommelier',
                     'Chef de rang', "Maître d'hôtel", 'Manager', 'Chef de cuisine', 'Chef de partie', 
@@ -11,8 +13,9 @@ const metiers = ['Voiturier', 'Serveur', 'Garçon de café', 'Plongeur', 'Runner
 
 const contrats = ['CDI', 'CDD', 'Extra'];
 
-function RechercheTalents({profilToDisplay}) {
+function RechercheTalents({profilToDisplay, isFocused}) {
 
+  const [profil, setProfil] = useState(profilToDisplay)
   const [choixContrat, setChoixContrat] = useState('CDI')
   const [metier, setMetier] = useState('Serveur')
   const [posterecherché,setposterecherché]=useState(metier)
@@ -20,29 +23,28 @@ function RechercheTalents({profilToDisplay}) {
   const [rechercheeffectuée,setrechercheeffectuée]=useState(false)
   const [liste, setListe] = useState([])
   
+  useEffect(()=>{
+    if(isFocused){
+      setProfil(profilToDisplay)
+    }
+  },[isFocused]);
+  
   useEffect(()=> {
     async function cherche(){
     var criteres = JSON.stringify({posterecherché: metier, typedecontrat:choixContrat})
-    var rechercheListe = await fetch("http://192.168.1.7:3000/restaurants/recherche-liste-talents", {
+    var rechercheListe = await fetch(`http://${adresseIP}:3000/restaurants/recherche-liste-talents`, {
         method:'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: `token=${profilToDisplay.token}&criteres=${criteres}`
+        body: `token=${profil.token}&criteres=${criteres}`
     })
         var response = await rechercheListe.json()
         setListe(response.liste)
+        setProfil(response.profil)
      }
     cherche()
-  },[metier,choixContrat, profilToDisplay])
+  },[metier,choixContrat])
 
-  async function onliketalent (id){
-    const saveReq = await fetch('restaurants/addToWishList', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: `id=${talent._id}&token=${profilToDisplay.token}` 
-    })
-    var response= await saveReq.json()
-    setListe(response.liste)
-}
+  
   return (
     <View style={{flex:1}}>
       <HeaderBar page='Recherche de talents'/>
@@ -88,15 +90,12 @@ function RechercheTalents({profilToDisplay}) {
           }
         </View>
         
-      
-
-      
       <View style={{flex:3}}>
         <ScrollView style={{marginTop: 20}}>
         {
           liste.map((talent,i)=> {
             return(
-              <CardTalent key={`${talent}${i}`} talent={talent}/>
+              <CardTalent key={`${talent}${i}`} talent={talent} inwishlit={true}/>
             )
           })
          }
@@ -139,4 +138,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps, 
   null
-)(RechercheTalents);
+)(withNavigationFocus(RechercheTalents));

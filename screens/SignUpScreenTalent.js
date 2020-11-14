@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { ScrollView, StyleSheet, Image, Text, View, KeyboardAvoidingView, Modal, Alert, ImageBackground, TextInput} from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TextInput} from 'react-native';
 import {connect} from 'react-redux'
 import {Button, Overlay} from 'react-native-elements'
-import Icon from 'react-native-vector-icons/FontAwesome';
 import HeaderBar from '../components/HeaderBar';
+import adresseIP from '../adresseIP';
 
-const adresseIP = '192.168.1.13'
 const image = require('../assets/image-carousel-2.jpg');
 const logo = require('../assets/logo-onatray.png');
 

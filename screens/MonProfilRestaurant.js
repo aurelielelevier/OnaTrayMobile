@@ -76,18 +76,17 @@ function MonProfilRestaurant({profilToDisplay}) {
       <Text key={`${clientele}${i}`}>{clientele}</Text>
     )
   })
-const pricing = <Text>€</Text>
-  // if(profil.pricing===0){
-  //    pricing = '€'
-  // } else if(profil.pricing===1){
-  //    pricing = '€€'
-  // }else if(profil.pricing===1){
-  //    pricing = '€€€'
-  // }
+
+var pricing
+if(profil.pricing === 0){
+  pricing = <Text>€</Text>
+} else if(profil.pricing === 1){
+  pricing = <Text>€€</Text>
+}else if(profil.pricing === 2){
+  pricing = <Text>€€€</Text>
+}
   
 
-  
-  
   const listeDeDonnees = [coordonnees, pricing, cuisine, ambiance, clientele]
   
   function affiche(i){
@@ -125,11 +124,12 @@ const pricing = <Text>€</Text>
         </View>
       </Overlay>
       <View style={{flex:1, marginTop:30, alignItems:'center'}}>
-      <Image
-        source={{ uri: profil.photo }}
-        style={{borderRadius:10, width: 400, height: 200 }}
-        
-      />
+        <Text>{profil.titre}</Text>
+        <Image
+          source={{ uri: profil.photo }}
+          style={{borderRadius:10, width: 400, height: 200 }}
+          
+        />
         <Text style={{color:'#4b6584', marginTop:20, fontWeight:'bold', fontSize:20}}>
           {profil.name}
           </Text>

@@ -4,19 +4,29 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import {connect} from 'react-redux'
 import {Button, Overlay, Avatar, Divider } from 'react-native-elements';
-import MapView from 'react-native-maps';
-import {Marker} from 'react-native-maps';
+import adresseIP from '../adresseIP';
+import { set } from 'react-native-reanimated';
 
 function CardTalent({profilToDisplay, talent, onChangeProfil}) {
   const [whishlist, setWhishlist] = useState(profilToDisplay.wishlistRestaurant)
-  const [coeur, setCoeur] = useState(isInwhislist())
+  const [inwishlist, setInWishlist] = useState(false)
   const [visible, setVisible] = useState(false);
+  const [profil, setProfil] = useState(profilToDisplay)
+  // const [coeur, setCoeur] =useState('heart-o')
+  const [tableau, setTabelau] = useState(profilToDisplay.wishlistRestaurant.map(talent=>talent._id))
+  
+  useEffect(()=>{
+    if(tableau.includes(talent._id)) {
+      setInWishlist(true)
+    }
+  },[tableau, profil]);
 
   const langues = talent.speakLangage.map((langue,i)=>{
     return(
       <Text key={`${langue}${i}`} style={styles.desciptif}>{langue}</Text>
     )
   })
+
   const formation = talent.formation.map((formation,i)=>{
     return(
       <View key={`${formation}${i}`}>
@@ -24,6 +34,7 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
       </View>
     )
   })
+
   const experience = talent.experience.map((experience,i)=>{
     return(
       <View key={`${experience}${i}`}>
@@ -32,15 +43,6 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
     )
   })
 
-  function isInwhislist(){
-      var result = 'heart-o'
-      for(var i=0; i<whishlist.length; i++){
-          if(whishlist[i]._id === talent._id){
-              result = 'heart'
-          }
-      }
-      return result
-  }
   if (talent.lookingForJob){
       var cherche = <FontAwesome name="check-square-o" size={15} color="#4b6584"/>
   } else {
@@ -52,22 +54,18 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
     var dispo = <FontAwesome name="square-o" size={15} color="#4b6584" />
 }
 
-    async function changementWhishlist(){
-        var rawresponse = await fetch("http://192.168.1.7:3000/restaurants/wishlist", {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: `token=${profilToDisplay.token}&id=${talent._id}`
-        })
-        var response = await rawresponse.json()
-        onChangeProfil(response.profil)
-    }
-    function changementCoeur(coeur){
-        if(coeur ==='heart'){
-            return('heart-o')
-        } else {
-            return('heart')
-        }
-    }
+async function changementWhishlist(){
+    var rawresponse = await fetch(`http://${adresseIP}:3000/restaurants/wishlist`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: `token=${profilToDisplay.token}&id=${talent._id}`
+    })
+    var response = await rawresponse.json()
+    onChangeProfil(response.profil)
+    setProfil(response.profil)
+    setInWishlist(!inwishlist)
+}
+
     
   return ( 
       <View>
@@ -75,9 +73,11 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                 isVisible={visible}
                 overlayStyle={{flex:0.8, width:'90%'}}
             >
-              <View style={{flex:1, margin:30}}>
+              <View style={{flex:1}}>
+              <ScrollView style={{flex:1}}>
                 <Text style={styles.titreOverlay}>{`${talent.firstName} ${talent.lastName}`}</Text>
                 <View style={{ padding:20, alignItems:'center'}}>
+                
                 <Avatar
                     rounded
                     size="xlarge"
@@ -111,6 +111,7 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                 </View>
                 
                 <Divider style={{margin:10}}/>
+                
                 <Text style={styles.desciptif}><Icon
                             name='comments'
                             size={20}
@@ -118,7 +119,10 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                             style={{marginRight:10}}
                     /></Text>{langues}
                 <Divider style={{margin:10}}/>
-                <ScrollView>
+                <View style={{flex:1}}>
+
+                
+                
                     <Text style={styles.desciptif}><Icon
                             name='briefcase'
                             size={20}
@@ -132,14 +136,16 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                             color='#4b6584'
                             style={{marginRight:10}}
                     /></Text>{experience}
-                </ScrollView>
                 
+                </View>
                 
                 <Button 
                     onPress={()=>{setVisible(false)}}
                     buttonStyle={{backgroundColor:'#fed330', margin:20}}
                     titleStyle={{color:'#4b6584'}}
                     title='OK'/>
+              </ScrollView>
+
               </View>
             </Overlay>
             
@@ -177,14 +183,18 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                         /> 
                         {` ${talent.email}`}
                     </Text>
+                    <Text style={styles.desciptif}>
+                        {cherche} Cherche un travail    {dispo} Est disponible
+                    </Text>
                 </View>
-                <View>
+                <View style={{paddingRight:1}}> 
                     <Icon
-                        name={coeur}
+                        name={inwishlist?'heart':'heart-o'}
                         size={24}
                         color='#4b6584'
-                        style={{marginRight:50}}
-                        onPress={()=>{{setCoeur(changementCoeur(coeur)); changementWhishlist()}}}
+                        style={{marginRight:70}}
+                        onPress={()=>{{
+                          changementWhishlist()}}}
                     />
                 </View>
             </View>
@@ -196,15 +206,10 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                     paddingHorizontal: 10,
                     }}
                 >
+                  
                 <View style={{ paddingLeft: 20, flex: 8,  justifyContent:'center' }} >
-                        
-            
-                    <Text style={styles.cases}>
-                        {cherche} Cherche un travail    {dispo} Est disponible
-                    </Text>
-                
+                    
                 </View>
-                
                 
                 <View style={{flex: 2}} >
                      
@@ -215,7 +220,7 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
                         name='search-plus'
                         size={24}
                         color='#4b6584'
-                        style={{ margin:10, alignSelf:'center'}}
+                        style={{ marginVertical:5, alignSelf:'center'}}
                         onPress={()=>{setVisible(true)}}
                         />
                 </View>
@@ -259,13 +264,7 @@ const styles = StyleSheet.create({
   desciptif:{
     textAlign:'center',
     color:'#4b6584',
-    fontSize:15,
-  },
-  cases:{
-    textAlign:'center',
-    color:'#4b6584',
-    fontSize:15,
-    marginTop:10,
+    fontSize:12,
   },
   desciptifOverlay:{
     textAlign:'left',

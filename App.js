@@ -13,6 +13,7 @@ import SignUpRestaurant from './screens/SignUpScreenRestaurant';
 import SignUpTalent from './screens/SignUpScreenTalent';
 import SignUpTalent2 from './screens/SignUpScreenTalent2';
 import SignUpTalent3 from './screens/SignUpScreenTalent3';
+import PhotoScreen from './screens/PhotoScreen';
 
 
 import {createAppContainer } from 'react-navigation';
@@ -106,6 +107,7 @@ StackNavigator = createStackNavigator({
   SignUpTalent2: SignUpTalent2,
   SignUpTalent3: SignUpTalent3,
   SignUpRestaurant: SignUpRestaurant,
+  PhotoScreen: PhotoScreen,
   BottomNavigatorRestaurant: BottomNavigatorRestaurant,
   BottomNavigatorTalent: BottomNavigatorTalent,
 }, 

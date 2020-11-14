@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView} from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { StyleSheet, Text, View, ScrollView, PushNotificationIOS} from 'react-native';
 import {connect} from 'react-redux'
 import { Divider, Avatar, Accessory, ListItem, Overlay, Button} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import HeaderBar from '../components/HeaderBar';
 import Map from './Map';
+import { withNavigationFocus } from 'react-navigation';
 
-function MonProfil({profilToDisplay}) {
+function MonProfil({profilToDisplay, navigation, isFocused}) {
   const[visible, setVisible] = useState(false)
   const [profil, setProfil] = useState(profilToDisplay)
   const[contenu, setContenu] = useState(<Text></Text>)
   const [flexOverlay, setFlexOverlay] = useState(0.5)
   
+  useEffect(()=>{
+    if(isFocused){
+      setProfil(profilToDisplay)
+    }
+  },[isFocused]);
+
   const list = [{ title: 'Mes coordonnées', icon: 'user', contenu:'adresse tel'},
                 {title: 'Ma formation', icon: 'briefcase', contenu:'formation 1 - PAris Bac'},
                 {title: 'Mon expérience', icon: 'vcard-o', contenu:'expérience 1 sklsldkfj  lkj dflkjsdf '},
@@ -20,6 +27,7 @@ function MonProfil({profilToDisplay}) {
                 {title: 'Type de contrat recherché', icon: 'check-square', contenu: 'CDI, CDD'},
                 {title: 'Je parle', icon: 'comments', contenu:'français'},
   ]
+
   const coordonnees = <View>
                           <Text style={styles.textOverlay}>
                         <Icon
@@ -126,7 +134,8 @@ function MonProfil({profilToDisplay}) {
               uri:profil.avatar,
           }}
           
-        ><Accessory style={{width:40, height:40, borderRadius:50}}/></Avatar>
+        ><Accessory style={{width:40, height:40, borderRadius:50 }}
+                    onPress={()=>{navigation.navigate('PhotoScreen')}}/></Avatar>
         <Text style={{color:'#4b6584', marginTop:20, fontWeight:'bold', fontSize:20}}>
           {`${profil.firstName} ${profil.lastName}`}
           </Text>
@@ -193,4 +202,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps, 
   null
-)(MonProfil);
+)(withNavigationFocus(MonProfil));

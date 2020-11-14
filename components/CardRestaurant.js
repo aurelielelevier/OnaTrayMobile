@@ -5,7 +5,7 @@ import {connect} from 'react-redux'
 import { Divider, Button, Overlay } from 'react-native-elements';
 import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
-const adresseIP = '192.168.1.13'
+import adresseIP from '../adresseIP';
 
 function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
   const [whishlist, setWhishlist] = useState(profilToDisplay.wishlistTalent)

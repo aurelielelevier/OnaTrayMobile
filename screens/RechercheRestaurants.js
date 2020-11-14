@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import {connect} from 'react-redux'
 import MultiSelect from 'react-native-multiple-select';
 import CardRestaurant from '../components/CardRestaurant';
-import HeaderBar from '../components/HeaderBar';
-const adresseIP='192.168.1.13'
+import { withNavigationFocus } from 'react-navigation';
+import adresseIP from '../adresseIP';
+
 const zoneFrance= [
   [ -5.3173828125, 48.458124202908934 ],
   [ 2.1313476562500004, 51.26170001449684 ],
@@ -50,7 +51,7 @@ const cuisine = itemsCuisine.map(item => item.name)
 const prix = itemsPrix.map(item => item.id)
 const clientele = itemsClientele.map(item => item.name)
 
-function Recherche({onChangeProfil, profilToDisplay}) {
+function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
   const [liste, setListe] = useState([])
   const [profil, setProfil] = useState(profilToDisplay)
   const [visibleModal, setVisibleModal] = useState(false)
@@ -61,6 +62,12 @@ function Recherche({onChangeProfil, profilToDisplay}) {
   const [zone, setZone] = useState(zoneFrance);
   const [texteZone, setTexteZone] = useState('Uniquement dans mon périmètre')
   
+  useEffect(()=>{
+    if(isFocused){
+      setProfil(profilToDisplay)
+    }
+  },[isFocused]);
+
   const onSelectedItemsCuisineChange = (selectedItems) => {
     setSelectedItemsCuisine(selectedItems);
   };
@@ -326,4 +333,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps, 
   mapDispatchToProps
-)(Recherche);
+)(withNavigationFocus(Recherche));
