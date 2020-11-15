@@ -4,34 +4,8 @@ import {connect} from 'react-redux'
 import {Button, CheckBox} from 'react-native-elements'
 import MultiSelect from 'react-native-multiple-select';
 import HeaderBar from '../components/HeaderBar';
-const adresseIP = '192.168.1.13'
-
-const itemsPostes = [{id: 'Voiturier', name: 'Voiturier'}, 
-                        {id: 'Serveur', name: 'Serveur'}, 
-                        {id: 'Garçon de café', name: 'Garçon de café'}, 
-                        {id: 'Plongeur',name: 'Plongeur'},
-                        {id: 'Runner', name: 'Runner'}, 
-                        {id: 'Sommelier',name: 'Sommelier'},
-                        {id: 'Chef de rang', name: 'Chef de rang'},
-                        {id: "Maître d'hôtel", name: "Maître d'hôtel"},
-                        {id: 'Manager', name: 'Manager'}, 
-                        {id: 'Chef de cuisine',name: 'Chef de cuisine'},
-                        {id: 'Chef de partie',name: 'Chef de partie'},
-                        {id: 'Commis de cuisine', name: 'Commis de cuisine'}, 
-                        {id: 'Pizzaiolo',name: 'Pizzaiolo'},
-                        {id: 'Pâtissier',name: 'Pâtissier'},
-];
-const itemsLangues = [{id: 'Français', name: 'Français'}, 
-                        {id: 'Anglais', name: 'Anglais'}, 
-                        {id: 'Espagnol', name: 'Espagnol'}, 
-                        {id: 'Italien',name: 'Italien'},
-                        {id: 'Allemand', name: 'Allemand'}, 
-                        {id: 'Chinois',name: 'Chinois'},
-];
-const itemsContrats = [{id: 'CDI', name: 'CDI'}, 
-                        {id: 'CDD', name: 'CDD'}, 
-                        {id: 'Extra', name: 'Extra'}, 
-];
+import adresseIP from '../adresseIP';
+import items from '../données/itemsTalents';
 
 function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
   
@@ -162,7 +136,7 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
                   hideTags
                   hideSubmitButton={true}
                   fixedHeight={false}
-                  items={itemsPostes}
+                  items={items.itemsPostes}
                   uniqueKey="id"
                   onSelectedItemsChange={onSelectedItemsJob}
                   selectedItems={jobChoosen}
@@ -185,7 +159,7 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
                   hideTags
                   hideSubmitButton={true}
                   fixedHeight={false}
-                  items={itemsLangues}
+                  items={items.itemsLangues}
                   uniqueKey="id"
                   onSelectedItemsChange={onSelectedItemsLangues}
                   selectedItems={langues}
@@ -208,7 +182,7 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
                   hideTags
                   hideSubmitButton={true}
                   fixedHeight={false}
-                  items={itemsContrats}
+                  items={items.itemsContrats}
                   uniqueKey="id"
                   onSelectedItemsChange={onSelectedItemsContrats}
                   selectedItems={contrats}

@@ -7,6 +7,10 @@ import { withNavigationFocus } from 'react-navigation';
 import adresseIP from '../adresseIP';
 
 function FavorisTalents({profilToDisplay, isFocused}) {
+  function logout(){
+    navigation.navigate('Home')
+  };
+
   const [liste, setListe] = useState([])
   const [profil, setProfil] = useState(profilToDisplay)
 
@@ -28,7 +32,7 @@ function FavorisTalents({profilToDisplay, isFocused}) {
   return (
     
     <View style={{flex:1}}>
-      <HeaderBar page='Mes favoris'/>
+      <HeaderBar page='Mes favoris' logout={logout}/>
       <View style={{flex:1}}>
         <ScrollView style={{flex: 1, marginTop: 20, marginBottom:10}}>
           <View style={{flex:1}}>
@@ -67,11 +71,19 @@ const styles = StyleSheet.create({
   }
 });
 
+function mapDispatchToProps (dispatch) {
+  return {
+      onChangeProfil: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+  }
+}
+
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
 }
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(withNavigationFocus(FavorisTalents));

@@ -7,6 +7,9 @@ import CardTalent from '../components/CardTalent';
 import adresseIP from '../adresseIP';
 
 function FavorisRestaurants({isFocused, profilToDisplay}) {
+  function logout(){
+      navigation.navigate('Home')
+  };
   const [liste, setListe] = useState([])
   const [profil, setProfil] = useState(profilToDisplay)
   
@@ -30,7 +33,7 @@ function FavorisRestaurants({isFocused, profilToDisplay}) {
   
   return (
     <View style={{flex:1}}>
-      <HeaderBar page='Mes favoris'/>
+      <HeaderBar page='Mes favoris' logout={logout}/>
       <View style={{flex:1}}>
         <ScrollView style={{marginTop: 20}}>
         {
@@ -66,6 +69,7 @@ const styles = StyleSheet.create({
 
   }
 });
+
 
 function mapStateToProps(state) {
     return { profilToDisplay : state.profil }

@@ -1,101 +1,112 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, ScrollView} from 'react-native';
 import {connect} from 'react-redux'
-import { Divider, ActivityIndicator, ListItem, Overlay, Button} from 'react-native-elements'
+import { Divider, ListItem, Overlay, Button, Image, Accessory} from 'react-native-elements'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import HeaderBar from '../components/HeaderBar';
-import Map from './Map';
 
-function MonProfilRestaurant({profilToDisplay}) {
-  console.log(profilToDisplay)
-  const[visible, setVisible] = useState(false)
-  const [profil, setProfil] = useState(profilToDisplay)
-  const[contenu, setContenu] = useState(<Text></Text>)
-  const [flexOverlay, setFlexOverlay] = useState(0.5)
+function MonProfilRestaurant({profilToDisplay, navigation}) {
+
+  const[visible, setVisible] = useState(false);
+  const [profil, setProfil] = useState(profilToDisplay);
+  const[contenu, setContenu] = useState(<Text></Text>);
+  const [flexOverlay, setFlexOverlay] = useState(0.5);
+  const [modalLogoutVisible, setModallogoutVisible] = useState(false)
   
-  const list = [{ title: 'Coordonnées', icon: 'home'},
-                {title: 'Gamme de prix', icon: 'euro'},
-                {title: 'Cuisine', icon: 'cutlery'},
-                {title: 'Ambiance', icon: 'info-circle'},
-                {title: 'Clientèle', icon: 'users'},
-  ]
+  function logout(){
+    navigation.navigate('Home')
+  };
+
+  const list = [
+    {title: 'Coordonnées', icon: 'home'},
+    {title: 'Gamme de prix', icon: 'euro'},
+    {title: 'Cuisine', icon: 'cutlery'},
+    {title: 'Ambiance', icon: 'info-circle'},
+    {title: 'Clientèle', icon: 'users'},
+  ];
+
+  // prépararion des données à afficher : 
   const coordonnees = <View>
-                          <Text style={styles.textOverlay}>
-                        <Icon
-                            name='map-marker'
-                            size={20}
-                            color='black'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${profil.adress}`}
-                    </Text>
-                        
-                    <Text style={styles.textOverlay}>
-                        <Icon
-                            name='phone'
-                            size={20}
-                            color='black'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${profil.phone}`}
-                    </Text>
-            
-                    <Text style={styles.textOverlay}>
-                        <Icon
-                            name='envelope-o'
-                            size={20}
-                            color='black'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${profil.email}`}
-                    </Text>
-                    <Text style={styles.textOverlay}>
-                        <Icon
-                            name='link'
-                            size={20}
-                            color='black'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${profil.website}`}
-                    </Text>
+                        <Text style={styles.textOverlay}>
+                          <Icon
+                              name='map-marker'
+                              size={20}
+                              color='black'
+                              style={{marginRight:10}}
+                          /> 
+                          {` ${profil.adress}`}
+                        </Text>
+                      
+                        <Text style={styles.textOverlay}>
+                            <Icon
+                                name='phone'
+                                size={20}
+                                color='black'
+                                style={{marginRight:10}}
+                            /> 
+                            {` ${profil.phone}`}
+                        </Text>
+          
+                        <Text style={styles.textOverlay}>
+                            <Icon
+                                name='envelope-o'
+                                size={20}
+                                color='black'
+                                style={{marginRight:10}}
+                            /> 
+                            {` ${profil.email}`}
+                        </Text>
+                        <Text style={styles.textOverlay}>
+                            <Icon
+                                name='link'
+                                size={20}
+                                color='black'
+                                style={{marginRight:10}}
+                            /> 
+                            {` ${profil.website}`}
+                        </Text>
                       </View>
 
   const cuisine = profil.typeOfFood.map((cuisine,i)=>{
     return(
       <Text key={`${cuisine}${i}`}>{cuisine}</Text>
     )
-  })
+  });
+
   const ambiance = profil.typeOfRestaurant.map((ambiance,i)=>{
     return(
       <Text key={`${ambiance}${i}`}>{ambiance}</Text>
     )
-  })
+  });
+
   const clientele = profil.clientele.map((clientele,i)=>{
     return(
       <Text key={`${clientele}${i}`}>{clientele}</Text>
     )
-  })
+  });
 
-var pricing
-if(profil.pricing === 0){
-  pricing = <Text>€</Text>
-} else if(profil.pricing === 1){
-  pricing = <Text>€€</Text>
-}else if(profil.pricing === 2){
-  pricing = <Text>€€€</Text>
-}
-  
+  var pricing
+  if(profil.pricing === 0){
+    pricing = <Text>€</Text>
+  } else if(profil.pricing === 1){
+    pricing = <Text>€€</Text>
+  }else if(profil.pricing === 2){
+    pricing = <Text>€€€</Text>
+  };
 
+  // mise en place des donnée dans un tableau en préparation de la liste à afficher : 
   const listeDeDonnees = [coordonnees, pricing, cuisine, ambiance, clientele]
   
+
   function affiche(i){
+    // permet d'afficher le contenu de la ligne sur laquelle le OnPress a été détecté
     var contenu = 
       <View style={{flex:1}}>
         <View style={{flex:1, borderRadius:10, backgroundColor:"#fed330", paddingTop:10}}>
         <Text style={styles.title}>
           <FontAwesome name={list[i].icon} size={24} color="#4b6584" />
-        {` ${list[i].title}`}</Text>
+           {` ${list[i].title}`}</Text>
         </View>
         <View style={{flex:3, borderRadius:10, backgroundColor:"#d1d8e0", marginTop:30, padding:20}}>
           {listeDeDonnees[i]}
@@ -107,7 +118,7 @@ if(profil.pricing === 0){
   
   return (
     <Divider style={styles.container}>
-      <HeaderBar page='Mon profil'/>
+      <HeaderBar page='Mon profil' logout={logout}/>
       <Overlay 
           isVisible={visible}
           overlayStyle={{flex:flexOverlay, width:'90%'}}>
@@ -123,17 +134,20 @@ if(profil.pricing === 0){
 
         </View>
       </Overlay>
-      <View style={{flex:1, marginTop:30, alignItems:'center'}}>
-        <Text>{profil.titre}</Text>
+      <View style={{flex:1, marginVertical:10, alignItems:'center'}}>
+        
+        <Text style={{color:'#4b6584', fontWeight:'bold', fontSize:20}}>
+          {profil.name}
+          </Text>
         <Image
           source={{ uri: profil.photo }}
           style={{borderRadius:10, width: 400, height: 200 }}
           
-        />
-        <Text style={{color:'#4b6584', marginTop:20, fontWeight:'bold', fontSize:20}}>
-          {profil.name}
-          </Text>
+        ><Accessory style={{width:40, height:40, borderRadius:50 , marginRight:20, marginBottom:20}}
+        onPress={()=>{navigation.navigate('PhotoScreen')}}/></Image>
+        
       </View>
+      
       <View style={{flex:2, width:'100%'}}>
         <ScrollView style={{ marginTop: 20, marginBottom:10}}>
           {
@@ -164,10 +178,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {
-    fontSize: 32,
-    backgroundColor: "#fff"
-  },
   title: {
     fontSize: 24,
     color:'#4b6584',
@@ -175,9 +185,16 @@ const styles = StyleSheet.create({
   },
   textOverlay: {
     fontSize: 14,
-
   }
 });
+
+function mapDispatchToProps (dispatch) {
+  return {
+      onChangeProfil: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+  }
+}
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
@@ -185,5 +202,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(MonProfilRestaurant);

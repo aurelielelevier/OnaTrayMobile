@@ -28,7 +28,6 @@ function SignUpScreenTalent3 ({navigation, onLogin, profilToDisplay}) {
           requete += tableauAdresse[i] + '+'
         }
       }
-
       async function autocompletion(){
         // Recherche d'une adresse existante sur l'API data.gouv.fr et mise à jour des 
         // coordonnées lat lng pour le point sur la carte

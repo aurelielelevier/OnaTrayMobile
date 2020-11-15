@@ -7,51 +7,20 @@ import MultiSelect from 'react-native-multiple-select';
 import CardRestaurant from '../components/CardRestaurant';
 import { withNavigationFocus } from 'react-navigation';
 import adresseIP from '../adresseIP';
+import items from '../données/itemsRestaurants'
 
-const zoneFrance= [
-  [ -5.3173828125, 48.458124202908934 ],
-  [ 2.1313476562500004, 51.26170001449684 ],
-  [ 8.811035156250002, 48.90783374365477 ],
-  [ 7.998046875000001, 43.70709714273101 ],
-  [ 3.2080078125000004, 42.228008913641865 ],
-  [ 1.4941406250000002, 42.293056273848215 ],
-  [ -2.0214843750000004, 43.06838615478111 ],
-  [ -5.3173828125, 48.458124202908934 ]
-]
-const itemsCuisine = [{id: 'française', name: 'française'}, 
-                      {id: 'italienne', name: 'italienne'}, 
-                      {id: 'japonaise', name: 'japonaise'}, 
-                      {id: 'chinois',name: 'chinois'}, 
-                      {id: 'healthy', name: 'healthy'}, 
-                      {id: 'viande', name: 'viande'}, 
-                      {id: 'poisson', name: 'poisson'}, 
-                      {id: 'pizza', name: 'pizza'}, 
-                      {id: 'burger', name: 'burger'}, 
-                      {id: 'vegetarienne', name: 'vegetarienne'}, 
-                      {id: 'vegan', name: 'vegan'}
-];
-const itemsPrix = [{id: 0, name: '€'}, 
-                    {id: 1, name: '€€'}, 
-                    {id: 2, name: '€€€'}
-];
-const itemsAmbiance = [{id: 'calme', name: 'calme'}, 
-                        {id: 'animé', name: 'animé'}, 
-                        {id: 'branché', name: 'branché'}, 
-                        {id: 'sobre',name: 'sobre'}
-];
-const itemsClientele = [{id: 'touristique', name: 'touristique'}, 
-                        {id: 'quartier', name: 'quartier'}, 
-                        {id: 'jeune', name: 'jeune'}, 
-                        {id: 'agée',name: 'agée'},
-                        {id: 'familiale', name: 'familiale'}, 
-                        {id: 'business',name: 'business'}
-];
-const ambiance = itemsAmbiance.map(item => item.name)
-const cuisine = itemsCuisine.map(item => item.name)
-const prix = itemsPrix.map(item => item.id)
-const clientele = itemsClientele.map(item => item.name)
+const ambiance = items.itemsAmbiance.map(item => item.name)
+const cuisine = items.itemsCuisine.map(item => item.name)
+const prix = items.itemsPrix.map(item => item.id)
+const clientele = items.itemsClientele.map(item => item.name)
 
 function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
+  function logout(){
+    setModallogoutVisible(true)
+    onChangeProfil({})
+    navigation.navigate('Home')
+  };
+
   const [liste, setListe] = useState([])
   const [profil, setProfil] = useState(profilToDisplay)
   const [visibleModal, setVisibleModal] = useState(false)
@@ -59,7 +28,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
   const [selectedItemsAmbiance, setSelectedItemsAmbiance] = useState(ambiance);
   const [selectedItemsCuisine, setSelectedItemsCuisine] = useState(cuisine);
   const [selectedItemsPrix, setSelectedItemsPrix] = useState(prix);
-  const [zone, setZone] = useState(zoneFrance);
+  const [zone, setZone] = useState(items.zoneFrance);
   const [texteZone, setTexteZone] = useState('Uniquement dans mon périmètre')
   
   useEffect(()=>{
@@ -89,7 +58,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
       setTexteZone('Montrer tous les restaurants')
     } else {
       setTexteZone('Uniquement dans mon périmètre')
-      setZone(zoneFrance)
+      setZone(items.zoneFrance)
     }
   }
 
@@ -124,12 +93,14 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
                   <Icon 
                     name='power-off' 
                     size={24}
-                    color='#4b6584' />
+                    color='#4b6584' 
+                    onPress={()=>{logout()}}/>
                   }
                   containerStyle={{
                     backgroundColor: '#fed330',
                     justifyContent: 'space-around',
                 }}
+                
               />
       <Button 
         onPress={()=>{changeZone()}}
@@ -160,7 +131,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
             hideTags
             hideSubmitButton={true}
             fixedHeight={false}
-            items={itemsCuisine}
+            items={items.itemsCuisine}
             uniqueKey="id"
             onSelectedItemsChange={onSelectedItemsCuisineChange}
             selectedItems={selectedItemsCuisine}
@@ -185,7 +156,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
             hideTags
             hideSubmitButton={true}
             fixedHeight={false}
-            items={itemsPrix}
+            items={items.itemsPrix}
             uniqueKey="id"
             onSelectedItemsChange={onSelectedItemsPrixChange}
             selectedItems={selectedItemsPrix}
@@ -210,7 +181,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
             hideTags
             hideSubmitButton={true}
             fixedHeight={false}
-            items={itemsAmbiance}
+            items={items.itemsAmbiance}
             uniqueKey="id"
             onSelectedItemsChange={onSelectedItemsAmbianceChange}
             selectedItems={selectedItemsAmbiance}
@@ -235,7 +206,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
             hideTags
             hideSubmitButton={true}
             fixedHeight={false}
-            items={itemsClientele}
+            items={items.itemsClientele}
             uniqueKey="id"
             onSelectedItemsChange={onSelectedItemsClienteleChange}
             selectedItems={selectedItemsClientele}

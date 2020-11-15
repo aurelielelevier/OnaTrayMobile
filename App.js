@@ -10,6 +10,7 @@ import MonProfilRestaurant from './screens/MonProfilRestaurant';
 import RechercheTalents from './screens/RechercheTalents';
 import FavorisRestaurant from './screens/FavorisRestaurant';
 import SignUpRestaurant from './screens/SignUpScreenRestaurant';
+import SignUpRestaurant2 from './screens/SignUpScreenRestaurant2';
 import SignUpTalent from './screens/SignUpScreenTalent';
 import SignUpTalent2 from './screens/SignUpScreenTalent2';
 import SignUpTalent3 from './screens/SignUpScreenTalent3';
@@ -58,8 +59,7 @@ var BottomNavigatorTalent = createBottomTabNavigator({
     style: {
       backgroundColor: '#fed330',
     }
-  }  
-
+  }
 }
 );
 
@@ -97,7 +97,6 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
       backgroundColor: '#fed330',
     }
   }  
-
 }
 );
 
@@ -107,6 +106,7 @@ StackNavigator = createStackNavigator({
   SignUpTalent2: SignUpTalent2,
   SignUpTalent3: SignUpTalent3,
   SignUpRestaurant: SignUpRestaurant,
+  SignUpRestaurant2: SignUpRestaurant2,
   PhotoScreen: PhotoScreen,
   BottomNavigatorRestaurant: BottomNavigatorRestaurant,
   BottomNavigatorTalent: BottomNavigatorTalent,

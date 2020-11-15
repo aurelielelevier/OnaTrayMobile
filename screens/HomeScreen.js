@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import { ActivityIndicator, StyleSheet, Image, Text, View, TouchableHighlight, Modal, Alert, ImageBackground, TextInput} from 'react-native';
-import {connect} from 'react-redux'
-import {Button} from 'react-native-elements'
+import {connect} from 'react-redux';
+import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import adresseIP from '../adresseIP';
 const image = require('../assets/image-carousel-2.jpg');
 const logo = require('../assets/logo-onatray.png');
-const adresseIP='192.168.1.13'
 
 function HomeScreen({navigation, pseudoToDisplay, onSetPseudo, onLogin }) {
   

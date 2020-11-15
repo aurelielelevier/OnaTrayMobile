@@ -1,150 +1,207 @@
-import React, { useState, useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Image, Text, View, TouchableHighlight, Modal, Alert, ImageBackground, TextInput} from 'react-native';
+import React, { useState, useEffect} from 'react';
+import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, TextInput} from 'react-native';
 import {connect} from 'react-redux'
-import {Button, Input} from 'react-native-elements'
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {Button, Overlay} from 'react-native-elements'
+import HeaderBar from '../components/HeaderBar';
+import adresseIP from '../adresseIP';
+import Autocomplete from 'react-native-autocomplete-input';
 
-const image = require('../assets/image-carousel-2.jpg');
-const logo = require('../assets/logo-onatray.png');
-
-function HomeScreen({navigation, profilToDisplay, pseudoToDisplay, onSetPseudo, onLogin }) {
+function SignUpScreenRestaurant ({navigation, onLogin}) {
   
   const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
-  const [valueEmail, setValueEmail] = useState('')
+  const [valueMotDePasse2, setValueMotDePasse2] = useState('');
+  const [valueEmail, setValueEmail] = useState('');
+  const [valueEmail2, setValueEmail2] = useState('');
+  const [nom, setNom] = useState('');
+  const [site, setSite] = useState('');
+  const [siret, setSiret] = useState('');
+  const [telephone, setTelephone] = useState('');
+  const [texteModal, setTexteModal] = useState('');
+  const[adresse, setAdresse] = useState('');
+  const[adressesProposees, setAdressesProposees] = useState([]);
+  const [latlngDomicile, setLatlngDomicile] = useState({coordinates: [ 2.3488, 48.8534]});
+  
+  function logout(){
+    setModallogoutVisible(true)
+    onChangeProfil({})
+    navigation.navigate('Home')
+  };
 
-  async function signin() {
-    var rawResponse = await fetch("http://192.168.1.7:3000/sign_in", {
-      method: 'POST',
-      headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: `email=${valueEmail}&password=${valueMotDePasse}`
-    })
-    var response = await rawResponse.json()
+  useEffect(() => {
+    // mise en forme du texte saisi pour pouvoir être utilisé avec l'API 
+      let tableauAdresse = adresse.split(' ')
+      let requete = ''
+      for(var i=0; i<tableauAdresse.length; i++){
+        if(i===tableauAdresse.length-1){
+          requete += tableauAdresse[i]
+        } else {
+          requete += tableauAdresse[i] + '+'
+        }
+      }
+      async function autocompletion(){
+        // Recherche d'une adresse existante sur l'API data.gouv.fr et mise à jour des 
+        // coordonnées lat lng pour le point sur la carte
+        var rawResponse = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${requete}`)
+        var response = await rawResponse.json()
+        var liste = []
+        for(var i=0; i<response.features.length; i++){
+          liste.push(response.features[i].properties.label)
+        }
+        setAdressesProposees(liste)
+        if(response.features[0]){
+          setLatlngDomicile(response.features[0].geometry)
+        }
+      } 
+      autocompletion()
+      console.log(latlngDomicile)
+    }, [adresse])
+
+  async function valider() {
+    var validation = false
+    if(valueEmail === valueEmail2 && valueEmail){
+      if(valueMotDePasse === valueMotDePasse2 && valueMotDePasse){
+      validation =true
+      } else {
+        setModalVisible(true)
+        setTexteModal('Veuillez renseigner des mots de passe identiques')
+      }
+    } else {
+      setModalVisible(true)
+      setTexteModal('Veuillez renseigner des emails identiques')
+    }
     
-      onLogin(response.profil)
-      onSetPseudo(response.pseudo)
-    if(response.type === 'talent'){
-      // AsyncStorage.setItem("pseudo", response.pseudo)
-      // AsyncStorage.setItem("profil", response.profil)
-      navigation.navigate('Restaurants')
-    } else if(response.type === 'restaurant'){
-      navigation.navigate('Talents')
-    } 
-    // else {
-    //   navigation.navigate('Home')
-    // }
+    if(validation){
+      var rawResponse = await fetch(`http://${adresseIP}:3000/restaurants/createAccount`, {
+        method: 'POST',
+        headers: {'Content-Type':'application/x-www-form-urlencoded'},
+        body: `restaurantEmail=${valueEmail}&restaurantPassword=${valueMotDePasse}&restaurantSiret=${siret}&restaurantName=${nom}&phoneRestaurant=${telephone}&restaurantAdress=${adresse}&lnglat=${JSON.stringify(latlngDomicile)}&restaurantWebsite=${site}`
+      })
+      var profil = await rawResponse.json()
+      onLogin(profil)
+      navigation.navigate('SignUpRestaurant2')
+    }
   }
 
-  if(profil){
-    var affichage =   <View style={{flex:1}}>
-                        
-                        <Text style={styles.text}> Bienvenue {pseudoToDisplay} </Text>
-                        <Text > Bienvenue </Text>
-                        <TouchableHighlight
-                            style={{ ...styles.openButton, backgroundColor: "#fed330", height:40, marginBottom:30}}
-                            onPress={() => {navigation.navigate('Rechercher')}}
-                          >
-                          <Text style={styles.textStyle}>Je commence</Text>
-                        </TouchableHighlight>
-                      </View>
-
-  } 
 
   return (
-    
+    <View style={{flex:1}}>
+      <HeaderBar page= 'Inscription' logout={logout}/>
       
-      <>
-      <View style={{flex:1, alignItems:'center', paddingTop:50}}>
-        <View style={{flex:1}}>
-          <Image  source={logo}
-                  style={{ width: 200, height: 200 }}
-                  PlaceholderContent={<ActivityIndicator />}
-                  />
-        </View>
-        <Text style={styles.sousTitre}>Bienvenue</Text>
+      <View style={{flex:1, alignItems:'center', paddingTop:10}}>
         
-        <View style={styles.centeredView}>
-      <Modal 
-        style={{flex:1, marginBottom:100}}
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-        }}
-      >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>Veuillez entrer votre Email et vote mot de passe</Text>
-          
-           <View style={{flexDirection:'row'}}>
-            <Icon
-                  name='envelope-o'
-                  size={24}
-                  color='#fed330'
-                  style={{margin:10}}
-                />
-              <TextInput
-                style={{ height: 30, width:'80%', fontSize:20, borderBottomWidth: 1, borderBottomColor: '#4b6584'}}
-                onChangeText={email => setValueEmail(email)}
-                value={valueEmail}
-                placeholder='Email'
-                autoCapitalize='none'
-              />
-            </View>
-            <View style={{flexDirection:'row', marginTop:30}}>
-            <Icon
-                  name='lock'
-                  size={24}
-                  color='#fed330'
-                  style={{margin:10}}
-                />
-              <TextInput
-                style={{ height: 30, width:'80%', fontSize:20, borderBottomWidth: 1, borderBottomColor: '#4b6584'}}
-                onChangeText={mdp => setValueMotDePasse(mdp)}
-                value={valueMotDePasse}
-                placeholder='Mot de passe'
-                secureTextEntry={true}
-                blurOnSubmit={true}
-              />
-            </View>
-          
-          <View style={{flexDirection:'row', marginTop:10}}>
-          
-          <TouchableHighlight
-            style={{ ...styles.openButton }}
-            onPress={() => { setModalVisible(!modalVisible); signin()}}
-          >
-            <Text style={styles.textStyle}>Confirmer</Text>
-          </TouchableHighlight>
-          
-          <TouchableHighlight
-            style={{ ...styles.openButton}}
-            onPress={() => { setModalVisible(!modalVisible)}}
-          >
-            <Text style={styles.textStyle}>Annuler</Text>
-          </TouchableHighlight>
+      <Overlay 
+        isVisible={modalVisible}
+        overlayStyle={{flex:0.2, width:'90%'}}
+        >
+        <View>
+          <Text style={{color:'red'}}>{texteModal}</Text>
+          <Button 
+              onPress={()=>{setModalVisible(false)}}
+              buttonStyle={{backgroundColor:'#fed330', margin:20}}
+              titleStyle={{color:'#4b6584'}}
+              title='OK'/>
+        </View>
+      </Overlay>
 
-          </View>
-        </View>
-      </View>
-      </Modal>
-      <View style={{flex:1, width:'50%'}}>
-        <Button 
-          onPress={()=>{setModalVisible(true)}}
-          buttonStyle={styles.button}
-          title='Connexion'
-          titleStyle={{color:'#4b6584'}}
-          color="#4b6584"
+      <Text>Pour créer votre compte, renseignez les informations suivantes :</Text>
+      <KeyboardAvoidingView style={{ flex: 1, width:'100%', justifyContent: 'center', }} behavior="padding" enabled >
+      <ScrollView style={{ width:'100%'}}>
+      
+        <View style={{alignItems:'center'}}>
+          <TextInput
+            style={styles.input}
+            onChangeText={email => setValueEmail(email)}
+            value={valueEmail}
+            placeholder='Email'
+            autoCapitalize='none'
+            autoCompleteType='email'
           />
+          <TextInput
+            style={styles.input}
+            onChangeText={email => setValueEmail2(email)}
+            value={valueEmail2}
+            placeholder='Confirmez votre email'
+            autoCapitalize='none'
+            autoCompleteType='email'
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={nom => setNom(nom)}
+            value={nom}
+            placeholder='NOM du restaurant'
+            autoCapitalize='characters'
+            autoCompleteType='name'
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={siret => setSiret(siret)}
+            value={siret}
+            placeholder='N° SIRET'
+            autoCapitalize='none'
+          />
+            <TextInput
+              style={styles.input}
+              onChangeText={text => setSite(text)}
+              value={site}
+              placeholder='Website'
+              autoCapitalize='none'
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={tel => setTelephone(tel)}
+              value={telephone}
+              placeholder='Téléphone'
+              autoCapitalize='none'
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={mdp => setValueMotDePasse(mdp)}
+              value={valueMotDePasse}
+              placeholder='Mot de passe'
+              secureTextEntry={true}
+              //blurOnSubmit={true}
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={mdp => setValueMotDePasse2(mdp)}
+              value={valueMotDePasse2}
+              placeholder='Confirmez votre mot de passe'
+              secureTextEntry={true}
+              //blurOnSubmit={true}
+            />
+          <View style={{flex:1, marginBottom:60, marginTop:20, width:'80%', borderColor:'#4b6584', borderWidth:1, borderRadius:10}}>
+              <Autocomplete
+                style={{width:'80%', height:35}}
+                inputContainerStyle={{borderWidth:0}}
+                listContainerStyle={{flex:1}}
+                data={adressesProposees}
+                defaultValue={adresse}
+                placeholder='Entrez votre adresse'
+                onChangeText={text => setAdresse(text)}
+                renderItem={({ item, i }) => (
+                  <TouchableOpacity onPress={() => setAdresse(item)}>
+                    <Text>{item}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+
+              </View>
+          
+          <Button 
+              onPress={()=>{{valider()}}}
+              buttonStyle={styles.button}
+              title='Valider'
+              titleStyle={{color:'#4b6584'}}
+              color="#4b6584"
+              />
       </View>
+    </ScrollView>
+    </KeyboardAvoidingView>
       
     </View>
-        
-    </View>
-      
-    </>
+  </View>
     
   );
 }
@@ -156,6 +213,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     textAlign:'center',
+  },
+  button:{
+    backgroundColor:'#fed330',
+    borderRadius:10,
+    marginHorizontal:20,
+    marginTop: 40
   },
   image: {
     flex: 1,
@@ -176,71 +239,21 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
   },
-  sousTitre:{
-    flex:1,
-    color:'#4b6584',
-    fontSize:40,
-    fontWeight: 'bold',
-    alignSelf: 'center',
-  },
-  centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalView: {
-    margin: 20,
-    marginBottom:200,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5
-  },
-  openButton: {
-    flex: 1,
-    height: 35,
-    alignItems:'center',
-    textAlign:'center',
-    backgroundColor: "#fed330",
-    borderRadius: 20,
-    padding:10,
-    margin:10,
+  input:{ 
     
-    //elevation: 2
-  },
-  textStyle: {
-    color: "#4b6584",
-    fontWeight: "bold",
-    textAlign: "center"
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: "center",
-    color:'#4b6584',
-    fontSize:20
-  },
-  button:{
-    backgroundColor:'#fed330',
-    borderRadius:10,
-   
+    height: 30, 
+    width:'80%', 
+    fontSize:20, 
+    height: 40, 
+    borderRadius:10, 
+    borderColor: '#4b6584', 
+    borderWidth: 1,
+    marginTop:20
   }
 });
 
 function mapDispatchToProps (dispatch) {
   return {
-      onSetPseudo: function(pseudo){
-        dispatch ({
-          type:'savePseudo', pseudo:pseudo
-        })
-      },
       onLogin: function(profil){
           dispatch({type:'addProfil', profil:profil})
       }
@@ -254,4 +267,4 @@ function mapStateToProps(state) {
 export default connect(
   mapStateToProps, 
   mapDispatchToProps
-)(HomeScreen);
+)(SignUpScreenRestaurant);

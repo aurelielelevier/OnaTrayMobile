@@ -1,14 +1,19 @@
 import React, { useState, useEffect} from 'react';
-import { StyleSheet, Text, View, ScrollView, PushNotificationIOS} from 'react-native';
-import {connect} from 'react-redux'
-import { Divider, Avatar, Accessory, ListItem, Overlay, Button} from 'react-native-elements'
+import { StyleSheet, Text, View, ScrollView} from 'react-native';
+import {connect} from 'react-redux';
+import { Divider, Avatar, Accessory, ListItem, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import HeaderBar from '../components/HeaderBar';
-import Map from './Map';
+import Map from '../components/Map';
 import { withNavigationFocus } from 'react-navigation';
 
 function MonProfil({profilToDisplay, navigation, isFocused}) {
+
+  function logout(){
+    navigation.navigate('Home')
+  };
+
   const[visible, setVisible] = useState(false)
   const [profil, setProfil] = useState(profilToDisplay)
   const[contenu, setContenu] = useState(<Text></Text>)
@@ -26,7 +31,7 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
                 {title: 'Mes métiers recherchés', icon: 'eye', contenu : 'cuisinier'},
                 {title: 'Type de contrat recherché', icon: 'check-square', contenu: 'CDI, CDD'},
                 {title: 'Je parle', icon: 'comments', contenu:'français'},
-  ]
+  ];
 
   const coordonnees = <View>
                           <Text style={styles.textOverlay}>
@@ -64,33 +69,37 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
     return(
       <Text key={`${langue}${i}`}>{langue}</Text>
     )
-  })
+  });
+
   const formation = profil.formation.map((formation,i)=>{
     return(
       <View key={`${formation}${i}`}>
         <Text >{`${formation.diploma} - ${formation.school} - ${formation.endingDate}`}</Text>
       </View>
     )
-  })
+  });
+
   const experience = profil.experience.map((experience,i)=>{
     return(
       <View key={`${experience}${i}`}>
         <Text style={{margin: 10}}>{`${experience.firm} - ${experience.city} - ${experience.job} - Du ${experience.startingDate} au ${experience.endingDate}`}</Text>
       </View>
     )
-  })
+  });
+
   const metiers = profil.lookingJob.map((metier,i)=>{
     return(
       <Text key={`${metier}${i}`}>{metier}</Text>
     )
-  })
+  });
+
   const contrats = profil.typeofContract.map((contrat,i)=>{
     return(
       <Text key={`${contrat}${i}`}>{contrat}</Text>
     )
-  })
+  });
   
-  const listeDeDonnees = [coordonnees, formation, experience, metiers, contrats, langues]
+  const listeDeDonnees = [coordonnees, formation, experience, metiers, contrats, langues];
   
   function affiche(i){
     var contenu = 
@@ -106,11 +115,13 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
       </View>
     setFlexOverlay(0.5)
     setContenu(contenu)
-  }
+  };
   
   return (
     <Divider style={styles.container}>
-      <HeaderBar page='Mon profil'/>
+
+      <HeaderBar page='Mon profil' logout={logout}/>
+
       <Overlay 
           isVisible={visible}
           overlayStyle={{flex:flexOverlay, width:'90%'}}>
@@ -123,9 +134,9 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
               titleStyle={{color:'#4b6584'}}
               title='OK'/>
           </View>
-
         </View>
       </Overlay>
+
       <View style={{flex:1, marginTop:30, alignItems:'center'}}>
         <Avatar
           rounded
@@ -134,12 +145,16 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
               uri:profil.avatar,
           }}
           
-        ><Accessory style={{width:40, height:40, borderRadius:50 }}
-                    onPress={()=>{navigation.navigate('PhotoScreen')}}/></Avatar>
+        >
+          <Accessory style={{width:40, height:40, borderRadius:50 }}
+                    onPress={()=>{navigation.navigate('PhotoScreen')}}/>
+        </Avatar>
+
         <Text style={{color:'#4b6584', marginTop:20, fontWeight:'bold', fontSize:20}}>
           {`${profil.firstName} ${profil.lastName}`}
-          </Text>
+        </Text>
       </View>
+
       <View style={{flex:2, width:'100%'}}>
         <ScrollView style={{ marginTop: 20, marginBottom:10}}>
           {
@@ -158,7 +173,7 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
           }
           <ListItem 
             bottomDivider
-            onPress={()=>{setVisible(true); setFlexOverlay(0.9);setContenu(<Map/>)}}
+            onPress={()=>{setVisible(true); setFlexOverlay(0.9); setContenu(<Map/>)}}
             >
             <FontAwesome name='street-view' size={24} color="#4b6584" />
             <ListItem.Content>
@@ -166,7 +181,6 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
             </ListItem.Content>
             <ListItem.Chevron/>
           </ListItem>
-          
         </ScrollView>
       </View>
     </Divider>
@@ -194,6 +208,7 @@ const styles = StyleSheet.create({
 
   }
 });
+
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }

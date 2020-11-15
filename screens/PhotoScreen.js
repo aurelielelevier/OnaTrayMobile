@@ -14,6 +14,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
   const [type, setType] = useState(Camera.Constants.Type.front);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
   const [visible, setVisible] = useState(false)
+
   var camera = useRef(null);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
   var cameraDisplay;
   if (hasPermission) {
     cameraDisplay = <Camera
-      style={{ flex: 0.8 }}
+      style={{flex: 1}}
       type={type}
       flashMode={flash}
       ref={ref => (camera = ref)}
@@ -41,6 +42,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
           style={{
             alignSelf: 'flex-end',
             alignItems: 'center',
+            margin : 25
           }}
           onPress={() => {
             setType(
@@ -49,19 +51,19 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
                 : Camera.Constants.Type.back
             );
           }}
-        >
+          >
           <IconIonic
             name="md-reverse-camera"
-            size={20}
-            color="#ffffff"
-          /><Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Retourner </Text>
+            size={30}
+            color="#fed330"
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={{
-
             alignSelf: 'flex-end',
             alignItems: 'center',
+            margin:25
           }}
           onPress={() => {
             setFlash(
@@ -72,39 +74,23 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
           }}
         >
           <IconFontAwesome
-            name="flash"
-            size={20}
-            color="#ffffff"
-          /><Text style={{ fontSize: 18, marginBottom: 10, color: 'white' }}> Flash </Text>
+              name="flash"
+              size={30}
+              color="#fed330"
+          />
+          
         </TouchableOpacity>
-
-      </View>
-    </Camera>
-  } else {
-    cameraDisplay = <View style={{ flex: 1 }}></View>
-  }
-  
-  
-    return(
-        <View style={{flex:1}}>
-          <Overlay isVisible={visible} width="auto" height="auto">
-          <View style={{justifyContent: "center" }}>
-            <ActivityIndicator size="large" color='#4b6584'/>
-          </View>
-          </Overlay>
-
-          {cameraDisplay}
-
-          <Button
+        <View style={{ width:70, justifyContent:'flex-end', marginBottom:10}}>
+        <Button
             icon={
               <IconFontAwesome
-                name="save"
-                size={20}
-                color="#ffffff"
+                name="camera"
+                size={25}
+                color="#4b6584"
               />
             }
-            title="  Prendre une photo"
-            buttonStyle={{ backgroundColor: "#4b6584" }}
+            // title="  Prendre une photo"
+            buttonStyle={{ backgroundColor: "#fed330", borderRadius:50, alignSelf:'center', width:60, height:60 }}
             type="solid"
             onPress={async () => {
               setVisible(true);
@@ -128,10 +114,34 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
                 console.log(response)
                 setVisible(false)
                 onLogin(response)
-                navigation.navigate('Restaurants')
+                if(response.name){
+                  navigation.navigate('Talents')
+                } else {
+                  navigation.navigate('Restaurants')
+                }
+                
               }
             }}
             />
+            </View>
+      </View>
+    </Camera>
+  } else {
+    cameraDisplay = <View style={{ flex: 1 }}></View>
+  }
+  
+  
+    return(
+        <View style={{flex:1}}>
+          <Overlay isVisible={visible} width="auto" height="auto">
+          <View style={{justifyContent: "center" }}>
+            <ActivityIndicator size="large" color='#4b6584'/>
+          </View>
+          </Overlay>
+
+          {cameraDisplay}
+
+         
   </View>
     )
 }

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {connect} from 'react-redux'
-import { StyleSheet, ScrollView,Picker, Text, View, SegmentedControlIOS} from 'react-native';
+import {StyleSheet, ScrollView,Picker, Text, View} from 'react-native';
 import { CheckBox } from 'react-native-elements'
 import HeaderBar from '../components/HeaderBar'
 import CardTalent from '../components/CardTalent';
@@ -13,8 +13,10 @@ const metiers = ['Voiturier', 'Serveur', 'Garçon de café', 'Plongeur', 'Runner
 
 const contrats = ['CDI', 'CDD', 'Extra'];
 
-function RechercheTalents({profilToDisplay, isFocused}) {
-
+function RechercheTalents({profilToDisplay, isFocused, navigation}) {
+  function logout(){
+    navigation.navigate('Home')
+  };
   const [profil, setProfil] = useState(profilToDisplay)
   const [choixContrat, setChoixContrat] = useState('CDI')
   const [metier, setMetier] = useState('Serveur')
@@ -24,12 +26,17 @@ function RechercheTalents({profilToDisplay, isFocused}) {
   const [liste, setListe] = useState([])
   
   useEffect(()=>{
+    //rechergement à chaque fois que la page est affichée
     if(isFocused){
       setProfil(profilToDisplay)
     }
   },[isFocused]);
   
   useEffect(()=> {
+    // requête permettant d'interroger le backend et de renvoyer la liste des talents
+    // - dont la zone de recherche d'emploi comprend l'adresse du restaurant
+    // - qui acceptent les contrats proposés par le restaurant
+    // - qui peuvent répondre au métier dont le restaurateur a besoin
     async function cherche(){
     var criteres = JSON.stringify({posterecherché: metier, typedecontrat:choixContrat})
     var rechercheListe = await fetch(`http://${adresseIP}:3000/restaurants/recherche-liste-talents`, {
@@ -47,7 +54,7 @@ function RechercheTalents({profilToDisplay, isFocused}) {
   
   return (
     <View style={{flex:1}}>
-      <HeaderBar page='Recherche de talents'/>
+      <HeaderBar page='Recherche de talents' logout={logout}/>
       <View style={{flex:1}}>
         <Text style={styles.titre}>Je cherche un(e) :</Text>
         <Picker
@@ -131,11 +138,19 @@ const styles = StyleSheet.create({
 
   }
 });
+
+function mapDispatchToProps (dispatch) {
+  return {
+      onChangeProfil: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+  }
+}
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
 }
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(withNavigationFocus(RechercheTalents));
