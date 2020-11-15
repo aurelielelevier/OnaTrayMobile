@@ -1,28 +1,29 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TextInput} from 'react-native';
-import {connect} from 'react-redux'
-import {Button, Overlay} from 'react-native-elements'
+import {connect} from 'react-redux';
+import {Button, Overlay} from 'react-native-elements';
 import HeaderBar from '../components/HeaderBar';
 import adresseIP from '../adresseIP';
 
-const image = require('../assets/image-carousel-2.jpg');
-const logo = require('../assets/logo-onatray.png');
-
 function SignUpScreenTalent ({navigation, onLogin }) {
   
-  const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
   const [valueMotDePasse2, setValueMotDePasse2] = useState('');
-  const [valueEmail, setValueEmail] = useState('')
-  const [valueEmail2, setValueEmail2] = useState('')
-  const [nom, setNom] = useState('')
-  const [prenom, setPrenom] = useState('')
-  const [telephone, setTelephone] = useState('')
-  const [texteModal, setTexteModal] = useState('')
+  const [valueEmail, setValueEmail] = useState('');
+  const [valueEmail2, setValueEmail2] = useState('');
+  const [nom, setNom] = useState('');
+  const [prenom, setPrenom] = useState('');
+  const [telephone, setTelephone] = useState('');
+  const [texteModal, setTexteModal] = useState('');
   
+  function logout(){
+    navigation.navigate('Home')
+  };
+
   async function valider() {
     var validation = false
+    // vérification que les 2 champs email et mot de passe sont concordants, sinon affichage d'une alerte
     if(valueEmail === valueEmail2 && valueEmail){
       if(valueMotDePasse === valueMotDePasse2 && valueMotDePasse){
       validation =true
@@ -33,120 +34,121 @@ function SignUpScreenTalent ({navigation, onLogin }) {
     } else {
       setModalVisible(true)
       setTexteModal('Veillez à renseigner des email identiques')
-    }
+    };
     
     if(validation){
-      console.log('COUCOU')
+      // requête au backent pour enregistrer un nouvel utilisateur
       var rawResponse = await fetch(`http://${adresseIP}:3000/talents/createAccount`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `email=${valueEmail}&password=${valueMotDePasse}&firstName=${prenom}&lastName=${nom}&phone=${telephone}`
       })
       var response = await rawResponse.json()
+      // chargement du profil dans le store et navigation vers la page suivante 
       onLogin(response.profil)
       navigation.navigate('SignUpTalent2')
     }
-  }
+  };
 
 
   return (
     <View style={{flex:1}}>
-      <HeaderBar page= 'Inscription'/>
+
+      <HeaderBar page= 'Inscription' logout={logout}/>
       
       <View style={{flex:1, alignItems:'center', paddingTop:50}}>
         
-      <Overlay 
-        isVisible={modalVisible}
-        overlayStyle={{flex:0.2, width:'90%'}}
-        >
-        <View>
-          <View style={{flex:1, margin:20}}>
-            <Text style={{color:'red'}}>{texteModal}</Text>
+        <Overlay 
+          isVisible={modalVisible}
+          overlayStyle={{flex:0.2, width:'90%'}}
+          >
+          <View>
+            <View style={{flex:1, margin:20}}>
+              <Text style={{color:'red'}}>{texteModal}</Text>
+            </View>
+            <Button 
+                onPress={()=>{setModalVisible(false)}}
+                buttonStyle={{backgroundColor:'#fed330', margin:20}}
+                titleStyle={{color:'#4b6584'}}
+                title='OK'/>
           </View>
-          <Button 
-              onPress={()=>{setModalVisible(false)}}
-              buttonStyle={{backgroundColor:'#fed330', margin:20}}
-              titleStyle={{color:'#4b6584'}}
-              title='OK'/>
-        </View>
-      </Overlay>
+        </Overlay>
 
-      <Text>Pour créer votre compte, renseignez les informations suivantes :</Text>
-      <KeyboardAvoidingView style={{ flex: 1, width:'100%', justifyContent: 'center', }} behavior="padding" enabled >
-      <ScrollView style={{ width:'100%'}}>
-      
-        <View style={{alignItems:'center'}}>
-          <TextInput
-            style={styles.input}
-            onChangeText={email => setValueEmail(email)}
-            value={valueEmail}
-            placeholder='Email'
-            autoCapitalize='none'
-            autoCompleteType='email'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={email => setValueEmail2(email)}
-            value={valueEmail2}
-            placeholder='Confirmez votre email'
-            autoCapitalize='none'
-            autoCompleteType='email'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={nom => setNom(nom)}
-            value={nom}
-            placeholder='NOM'
-            autoCapitalize='characters'
-            autoCompleteType='name'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={prenom => setPrenom(prenom)}
-            value={prenom}
-            placeholder='Prénom'
-            autoCapitalize='words'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={tel => setTelephone(tel)}
-            value={telephone}
-            placeholder='Téléphone'
-            autoCapitalize='none'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={mdp => setValueMotDePasse(mdp)}
-            value={valueMotDePasse}
-            placeholder='Mot de passe'
-            secureTextEntry={true}
-            blurOnSubmit={true}
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={mdp => setValueMotDePasse2(mdp)}
-            value={valueMotDePasse2}
-            placeholder='Confirmez votre mot de passe'
-            secureTextEntry={true}
-            blurOnSubmit={true}
-          />
+        <Text>Pour créer votre compte, renseignez les informations suivantes :</Text>
+        
+        <KeyboardAvoidingView style={{ flex: 1, width:'100%', justifyContent: 'center', }} behavior="padding" enabled >
           
-          <Button 
-              onPress={()=>{{valider()}}}
-              buttonStyle={styles.button}
-              title='Valider'
-              titleStyle={{color:'#4b6584'}}
-              color="#4b6584"
+          <ScrollView style={{ width:'100%'}}>
+            <View style={{alignItems:'center'}}>
+              <TextInput
+                style={styles.input}
+                onChangeText={email => setValueEmail(email)}
+                value={valueEmail}
+                placeholder='Email'
+                autoCapitalize='none'
+                autoCompleteType='email'
               />
+              <TextInput
+                style={styles.input}
+                onChangeText={email => setValueEmail2(email)}
+                value={valueEmail2}
+                placeholder='Confirmez votre email'
+                autoCapitalize='none'
+                autoCompleteType='email'
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={nom => setNom(nom)}
+                value={nom}
+                placeholder='NOM'
+                autoCapitalize='characters'
+                autoCompleteType='name'
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={prenom => setPrenom(prenom)}
+                value={prenom}
+                placeholder='Prénom'
+                autoCapitalize='words'
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={tel => setTelephone(tel)}
+                value={telephone}
+                placeholder='Téléphone'
+                autoCapitalize='none'
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={mdp => setValueMotDePasse(mdp)}
+                value={valueMotDePasse}
+                placeholder='Mot de passe'
+                secureTextEntry={true}
+                blurOnSubmit={true}
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={mdp => setValueMotDePasse2(mdp)}
+                value={valueMotDePasse2}
+                placeholder='Confirmez votre mot de passe'
+                secureTextEntry={true}
+                blurOnSubmit={true}
+              />
+              
+              <Button 
+                  onPress={()=>{{valider()}}}
+                  buttonStyle={styles.button}
+                  title='Valider'
+                  titleStyle={{color:'#4b6584'}}
+                  color="#4b6584"
+                  />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
-    </ScrollView>
-    </KeyboardAvoidingView>
-      
     </View>
-  </View>
-    
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -195,15 +197,15 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps (dispatch) {
   return {
-      onLogin: function(profil){
-          dispatch({type:'addProfil', profil:profil})
-      }
-      }
+    onLogin: function(profil){
+        dispatch({type:'addProfil', profil:profil})
+    }
   }
+};
 
 function mapStateToProps(state) {
   return { profilToDisplay: state.profil, pseudoToDisplay: state.pseudo}
-}
+};
 
 export default connect(
   mapStateToProps, 

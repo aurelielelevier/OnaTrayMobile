@@ -1,14 +1,13 @@
 import React, { useState, useEffect} from 'react';
 import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, TextInput} from 'react-native';
-import {connect} from 'react-redux'
-import {Button, Overlay} from 'react-native-elements'
+import {connect} from 'react-redux';
+import {Button, Overlay} from 'react-native-elements';
 import HeaderBar from '../components/HeaderBar';
 import adresseIP from '../adresseIP';
 import Autocomplete from 'react-native-autocomplete-input';
 
 function SignUpScreenRestaurant ({navigation, onLogin}) {
   
-  const [profil, setProfil] = useState('')
   const [modalVisible, setModalVisible] = useState(false);
   const [valueMotDePasse, setValueMotDePasse] = useState('');
   const [valueMotDePasse2, setValueMotDePasse2] = useState('');
@@ -24,8 +23,6 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
   const [latlngDomicile, setLatlngDomicile] = useState({coordinates: [ 2.3488, 48.8534]});
   
   function logout(){
-    setModallogoutVisible(true)
-    onChangeProfil({})
     navigation.navigate('Home')
   };
 
@@ -56,7 +53,7 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
       } 
       autocompletion()
       console.log(latlngDomicile)
-    }, [adresse])
+    }, [adresse]);
 
   async function valider() {
     var validation = false
@@ -70,7 +67,7 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
     } else {
       setModalVisible(true)
       setTexteModal('Veuillez renseigner des emails identiques')
-    }
+    };
     
     if(validation){
       var rawResponse = await fetch(`http://${adresseIP}:3000/restaurants/createAccount`, {
@@ -82,8 +79,7 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
       onLogin(profil)
       navigation.navigate('SignUpRestaurant2')
     }
-  }
-
+  };
 
   return (
     <View style={{flex:1}}>
@@ -106,105 +102,103 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
       </Overlay>
 
       <Text>Pour créer votre compte, renseignez les informations suivantes :</Text>
-      <KeyboardAvoidingView style={{ flex: 1, width:'100%', justifyContent: 'center', }} behavior="padding" enabled >
-      <ScrollView style={{ width:'100%'}}>
-      
-        <View style={{alignItems:'center'}}>
-          <TextInput
-            style={styles.input}
-            onChangeText={email => setValueEmail(email)}
-            value={valueEmail}
-            placeholder='Email'
-            autoCapitalize='none'
-            autoCompleteType='email'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={email => setValueEmail2(email)}
-            value={valueEmail2}
-            placeholder='Confirmez votre email'
-            autoCapitalize='none'
-            autoCompleteType='email'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={nom => setNom(nom)}
-            value={nom}
-            placeholder='NOM du restaurant'
-            autoCapitalize='characters'
-            autoCompleteType='name'
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={siret => setSiret(siret)}
-            value={siret}
-            placeholder='N° SIRET'
-            autoCapitalize='none'
-          />
-            <TextInput
-              style={styles.input}
-              onChangeText={text => setSite(text)}
-              value={site}
-              placeholder='Website'
-              autoCapitalize='none'
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={tel => setTelephone(tel)}
-              value={telephone}
-              placeholder='Téléphone'
-              autoCapitalize='none'
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={mdp => setValueMotDePasse(mdp)}
-              value={valueMotDePasse}
-              placeholder='Mot de passe'
-              secureTextEntry={true}
-              //blurOnSubmit={true}
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={mdp => setValueMotDePasse2(mdp)}
-              value={valueMotDePasse2}
-              placeholder='Confirmez votre mot de passe'
-              secureTextEntry={true}
-              //blurOnSubmit={true}
-            />
-          <View style={{flex:1, marginBottom:60, marginTop:20, width:'80%', borderColor:'#4b6584', borderWidth:1, borderRadius:10}}>
-              <Autocomplete
-                style={{width:'80%', height:35}}
-                inputContainerStyle={{borderWidth:0}}
-                listContainerStyle={{flex:1}}
-                data={adressesProposees}
-                defaultValue={adresse}
-                placeholder='Entrez votre adresse'
-                onChangeText={text => setAdresse(text)}
-                renderItem={({ item, i }) => (
-                  <TouchableOpacity onPress={() => setAdresse(item)}>
-                    <Text>{item}</Text>
-                  </TouchableOpacity>
-                )}
-              />
 
-              </View>
-          
-          <Button 
-              onPress={()=>{{valider()}}}
-              buttonStyle={styles.button}
-              title='Valider'
-              titleStyle={{color:'#4b6584'}}
-              color="#4b6584"
+      <KeyboardAvoidingView style={{ flex: 1, width:'100%', justifyContent: 'center', }} behavior="padding" enabled >
+        <ScrollView style={{ width:'100%'}}>
+        
+          <View style={{alignItems:'center'}}>
+            <TextInput
+              style={styles.input}
+              onChangeText={email => setValueEmail(email)}
+              value={valueEmail}
+              placeholder='Email'
+              autoCapitalize='none'
+              autoCompleteType='email'
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={email => setValueEmail2(email)}
+              value={valueEmail2}
+              placeholder='Confirmez votre email'
+              autoCapitalize='none'
+              autoCompleteType='email'
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={nom => setNom(nom)}
+              value={nom}
+              placeholder='NOM du restaurant'
+              autoCapitalize='characters'
+              autoCompleteType='name'
+            />
+            <TextInput
+              style={styles.input}
+              onChangeText={siret => setSiret(siret)}
+              value={siret}
+              placeholder='N° SIRET'
+              autoCapitalize='none'
+            />
+              <TextInput
+                style={styles.input}
+                onChangeText={text => setSite(text)}
+                value={site}
+                placeholder='Website'
+                autoCapitalize='none'
               />
-      </View>
-    </ScrollView>
-    </KeyboardAvoidingView>
-      
+              <TextInput
+                style={styles.input}
+                onChangeText={tel => setTelephone(tel)}
+                value={telephone}
+                placeholder='Téléphone'
+                autoCapitalize='none'
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={mdp => setValueMotDePasse(mdp)}
+                value={valueMotDePasse}
+                placeholder='Mot de passe'
+                secureTextEntry={true}
+                //blurOnSubmit={true}
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={mdp => setValueMotDePasse2(mdp)}
+                value={valueMotDePasse2}
+                placeholder='Confirmez votre mot de passe'
+                secureTextEntry={true}
+                //blurOnSubmit={true}
+              />
+            <View style={{flex:1, marginBottom:60, marginTop:20, width:'80%', borderColor:'#4b6584', borderWidth:1, borderRadius:10}}>
+                <Autocomplete
+                  style={{width:'80%', height:35}}
+                  inputContainerStyle={{borderWidth:0}}
+                  listContainerStyle={{flex:1}}
+                  data={adressesProposees}
+                  defaultValue={adresse}
+                  placeholder='Entrez votre adresse'
+                  onChangeText={text => setAdresse(text)}
+                  renderItem={({ item, i }) => (
+                    <TouchableOpacity onPress={() => setAdresse(item)}>
+                      <Text>{item}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+            </View>
+            
+            <Button 
+                onPress={()=>{{valider()}}}
+                buttonStyle={styles.button}
+                title='Valider'
+                titleStyle={{color:'#4b6584'}}
+                color="#4b6584"
+                />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   </View>
-    
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -257,14 +251,10 @@ function mapDispatchToProps (dispatch) {
       onLogin: function(profil){
           dispatch({type:'addProfil', profil:profil})
       }
-      }
   }
-
-function mapStateToProps(state) {
-  return { profilToDisplay: state.profil, pseudoToDisplay: state.pseudo}
-}
+};
 
 export default connect(
-  mapStateToProps, 
+  null, 
   mapDispatchToProps
 )(SignUpScreenRestaurant);

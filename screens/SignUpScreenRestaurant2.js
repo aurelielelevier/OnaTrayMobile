@@ -1,7 +1,7 @@
-import React, { useState, useEffect} from 'react';
-import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpacity, TextInput} from 'react-native';
+import React, { useState} from 'react';
+import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView} from 'react-native';
 import {connect} from 'react-redux';
-import {Button, Overlay} from 'react-native-elements';
+import {Button} from 'react-native-elements';
 import { CheckBox } from 'react-native-elements';
 import MultiSelect from 'react-native-multiple-select';
 import HeaderBar from '../components/HeaderBar';
@@ -10,15 +10,12 @@ import items from '../données/itemsRestaurants';
 
 function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
   
-  const [profil, setProfil] = useState(profilToDisplay)
-  const [modalVisible, setModalVisible] = useState(false);
   const [clientele, setClientele] = useState([]);
   const [prix, setPrix] = useState([]);
   const [cuisine, setCuisine] = useState([]);
   const [ambiance, setAmbiance] = useState([]);
   
   function logout(){
-    onLogin({})
     navigation.navigate('Home')
   };
 
@@ -33,6 +30,7 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
   };
 
   async function valider() {
+    // Conversion des données texte en Number (forme d'inscription en base de données)
     if(prix === '€'){
       var prixConverti = 0
     } else if (prix === '€€'){
@@ -40,17 +38,17 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
     } else {
       var prixConverti = 2
     }
+    // Requête au backend permettant de mettre à jour les informations relatives au restaurant en base de données
     var rawResponse = await fetch(`http://${adresseIP}:3000/restaurants/informations`, {
       method: 'PUT',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profilToDisplay.token}&clientele=${JSON.stringify(clientele)}&foodOption=${JSON.stringify(cuisine)}&restaurantOption=${JSON.stringify(ambiance)}&pricing=${prixConverti}`
     })
-    var response = await rawResponse.json()
-    console.log(response)
-    onLogin(response)
+    var profil = await rawResponse.json()
+    // mise à jour du profil dans le store et navigation vers la page de recherche
+    onLogin(profil)
     navigation.navigate('Talents')
-  }
-
+  };
 
   return (
     <View style={{flex:1}}>
@@ -60,118 +58,114 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
 
       <Text>Complétez vos informations en cochant les caractéristiques de votre restaurant dans les listes suivantes :</Text>
       <KeyboardAvoidingView style={{ flex: 1, width:'100%', justifyContent: 'center', }} behavior="padding" enabled >
-      <ScrollView style={{ width:'100%'}}>
-      <View style={{flex:1, marginTop:10}}>
-                <MultiSelect
-                  hideTags
-                  hideSubmitButton={true}
-                  fixedHeight={false}
-                  items={items.itemsCuisine}
-                  uniqueKey="id"
-                  onSelectedItemsChange={onSelectedItemsCuisine}
-                  selectedItems={cuisine}
-                  selectText="     Type de cuisine"
-                  searchInputPlaceholderText="Cuisine"
-                  onChangeInput={(text) => console.log(text)}
-                  tagRemoveIconColor="#CCC"
-                  tagBorderColor="#CCC"
-                  tagTextColor="#4b6584"
-                  selectedItemTextColor="#4b6584"
-                  selectedItemIconColor="#4b6584"
-                  itemTextColor="#CCC"
-                  displayKey="name"
-                  searchInputStyle={{color: '#4b6584'}}
-                  submitButtonColor="#4b6584"
-                  styleTextDropdownSelected={{color:'#4b6584', marginLeft:10}}
-                  styleDropdownMenuSubsection={{borderColor:'#4b6584', borderStyle:'solid', borderWidth:1}}
-                />
-                <MultiSelect
-                  hideTags
-                  hideSubmitButton={true}
-                  fixedHeight={false}
-                  items={items.itemsClientele}
-                  uniqueKey="id"
-                  onSelectedItemsChange={onSelectedItemsClientele}
-                  selectedItems={clientele}
-                  selectText="    Type de clientèle"
-                  searchInputPlaceholderText="Type de clientèle"
-                  onChangeInput={(text) => console.log(text)}
-                  tagRemoveIconColor="#CCC"
-                  tagBorderColor="#CCC"
-                  tagTextColor="#4b6584"
-                  selectedItemTextColor="#4b6584"
-                  selectedItemIconColor="#4b6584"
-                  itemTextColor="#CCC"
-                  displayKey="name"
-                  searchInputStyle={{color: '#4b6584'}}
-                  submitButtonColor="#4b6584"
-                  styleTextDropdownSelected={{color:'#4b6584', marginLeft:10}}
-                  styleDropdownMenuSubsection={{borderColor:'#4b6584', borderStyle:'solid', borderWidth:1}}
-                />
-                <MultiSelect
-                  hideTags
-                  hideSubmitButton={true}
-                  fixedHeight={false}
-                  items={items.itemsAmbiance}
-                  uniqueKey="id"
-                  onSelectedItemsChange={onSelectedItemsAmbiance}
-                  selectedItems={ambiance}
-                  selectText="   Type d'ambiance"
-                  searchInputPlaceholderText="Type d'ambiance"
-                  onChangeInput={(text) => console.log(text)}
-                  tagRemoveIconColor="#CCC"
-                  tagBorderColor="#CCC"
-                  tagTextColor="#4b6584"
-                  selectedItemTextColor="#4b6584"
-                  selectedItemIconColor="#4b6584"
-                  itemTextColor="#CCC"
-                  displayKey="name"
-                  searchInputStyle={{color: '#4b6584'}}
-                  submitButtonColor="#4b6584"s
-                  styleTextDropdownSelected={{color:'#4b6584', marginLeft:10}}
-                  styleDropdownMenuSubsection={{borderColor:'#4b6584', borderStyle:'solid', borderWidth:1}}
-                />
-                <Text style={styles.text}>Gamme de prix :</Text>
-                  <View style={{flexDirection:'row'}}>
-                  
+        <ScrollView style={{ width:'100%'}}>
+          <View style={{flex:1, marginTop:10}}>
+            <MultiSelect
+              hideTags
+              hideSubmitButton={true}
+              fixedHeight={false}
+              items={items.itemsCuisine}
+              uniqueKey="id"
+              onSelectedItemsChange={onSelectedItemsCuisine}
+              selectedItems={cuisine}
+              selectText="     Type de cuisine"
+              searchInputPlaceholderText="Cuisine"
+              onChangeInput={(text) => console.log(text)}
+              tagRemoveIconColor="#CCC"
+              tagBorderColor="#CCC"
+              tagTextColor="#4b6584"
+              selectedItemTextColor="#4b6584"
+              selectedItemIconColor="#4b6584"
+              itemTextColor="#CCC"
+              displayKey="name"
+              searchInputStyle={{color: '#4b6584'}}
+              submitButtonColor="#4b6584"
+              styleTextDropdownSelected={{color:'#4b6584', marginLeft:10}}
+              styleDropdownMenuSubsection={{borderColor:'#4b6584', borderStyle:'solid', borderWidth:1}}
+            />
+            <MultiSelect
+              hideTags
+              hideSubmitButton={true}
+              fixedHeight={false}
+              items={items.itemsClientele}
+              uniqueKey="id"
+              onSelectedItemsChange={onSelectedItemsClientele}
+              selectedItems={clientele}
+              selectText="    Type de clientèle"
+              searchInputPlaceholderText="Type de clientèle"
+              onChangeInput={(text) => console.log(text)}
+              tagRemoveIconColor="#CCC"
+              tagBorderColor="#CCC"
+              tagTextColor="#4b6584"
+              selectedItemTextColor="#4b6584"
+              selectedItemIconColor="#4b6584"
+              itemTextColor="#CCC"
+              displayKey="name"
+              searchInputStyle={{color: '#4b6584'}}
+              submitButtonColor="#4b6584"
+              styleTextDropdownSelected={{color:'#4b6584', marginLeft:10}}
+              styleDropdownMenuSubsection={{borderColor:'#4b6584', borderStyle:'solid', borderWidth:1}}
+            />
+            <MultiSelect
+              hideTags
+              hideSubmitButton={true}
+              fixedHeight={false}
+              items={items.itemsAmbiance}
+              uniqueKey="id"
+              onSelectedItemsChange={onSelectedItemsAmbiance}
+              selectedItems={ambiance}
+              selectText="   Type d'ambiance"
+              searchInputPlaceholderText="Type d'ambiance"
+              onChangeInput={(text) => console.log(text)}
+              tagRemoveIconColor="#CCC"
+              tagBorderColor="#CCC"
+              tagTextColor="#4b6584"
+              selectedItemTextColor="#4b6584"
+              selectedItemIconColor="#4b6584"
+              itemTextColor="#CCC"
+              displayKey="name"
+              searchInputStyle={{color: '#4b6584'}}
+              submitButtonColor="#4b6584"s
+              styleTextDropdownSelected={{color:'#4b6584', marginLeft:10}}
+              styleDropdownMenuSubsection={{borderColor:'#4b6584', borderStyle:'solid', borderWidth:1}}
+            />
+            <Text style={styles.text}>Gamme de prix :</Text>
+            <View style={{flexDirection:'row'}}>
+              {
+                items.itemsPrix.map((valeur,i)=>{
+                  return(
+                    <CheckBox
+                      key={i+valeur.name}
+                      center
+                      title={valeur.name}
+                      color={'red'}
+                      containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
+                      checkedIcon='dot-circle-o'
+                      uncheckedIcon='circle-o'
+                      checked={valeur.name===prix?true:false}
+                      onPress={()=>{{setPrix(valeur.name)}}}
+                    />
+                  )
+                })
+              }
+            </View>
+          </View>
 
-                    {
-                      items.itemsPrix.map((valeur,i)=>{
-                        return(
-                          <CheckBox
-                            key={i+valeur.name}
-                            center
-                            title={valeur.name}
-                            color={'red'}
-                            containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
-                            checkedIcon='dot-circle-o'
-                            uncheckedIcon='circle-o'
-                            checked={valeur.name===prix?true:false}
-                            onPress={()=>{{setPrix(valeur.name)}}}
-                          />
-                        )
-                      })
-                    }
-                  </View>
-                </View>
-        <View style={{alignItems:'center'}}>
-          
-          <Button 
-              onPress={()=>{{valider()}}}
-              buttonStyle={styles.button}
-              title='Valider'
-              titleStyle={{color:'#4b6584'}}
-              color="#4b6584"
-              />
-      </View>
-    </ScrollView>
-    </KeyboardAvoidingView>
-      
+          <View style={{alignItems:'center'}}>
+            <Button 
+                onPress={()=>{{valider()}}}
+                buttonStyle={styles.button}
+                title='Valider'
+                titleStyle={{color:'#4b6584'}}
+                color="#4b6584"
+                />
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   </View>
-    
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -208,7 +202,6 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   input:{ 
-    
     height: 30, 
     width:'80%', 
     fontSize:20, 
@@ -222,15 +215,15 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps (dispatch) {
   return {
-      onLogin: function(profil){
-          dispatch({type:'addProfil', profil:profil})
-      }
-      }
+    onLogin: function(profil){
+        dispatch({type:'addProfil', profil:profil})
+    }
   }
+};
 
 function mapStateToProps(state) {
   return { profilToDisplay: state.profil}
-}
+};
 
 export default connect(
   mapStateToProps, 

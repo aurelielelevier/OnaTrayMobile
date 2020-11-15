@@ -1,50 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, ScrollView, Text, View, ActivityIndicator, Image} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {connect} from 'react-redux'
-import { Divider, Button, Overlay } from 'react-native-elements';
+import {connect} from 'react-redux';
+import { Button, Overlay, Badge } from 'react-native-elements';
 import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
 import adresseIP from '../adresseIP';
 
 function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
-  const [whishlist, setWhishlist] = useState(profilToDisplay.wishlistTalent)
-  const [coeur, setCoeur] = useState(isInwhislist())
-  const [visible, setVisible] = useState(false);
 
-  function isInwhislist(){
-      var result = 'heart-o'
-      for(var i=0; i<whishlist.length; i++){
-          if(whishlist[i]._id === resto._id){
-              result = 'heart'
-          }
-      }
-      return result
-  }
+    const [wishlist, setWishlist] = useState(profilToDisplay.wishlistTalent);
+    const [coeur, setCoeur] = useState(isInWishlist());
+    const [visible, setVisible] = useState(false);
 
-  const polygone = []
-  for(var i=0; i<profilToDisplay.perimetre.length; i++){
+    function isInWishlist(){
+        var result = 'heart-o'
+        for(var i=0; i<wishlist.length; i++){
+            if(wishlist[i]._id === resto._id){
+                result = 'heart'
+            }
+        }
+        return result
+    };
+
+    const polygone = []
+    for(var i=0; i<profilToDisplay.perimetre.length; i++){
         polygone.push({latitude:profilToDisplay.perimetre[i][1], longitude:profilToDisplay.perimetre[i][0]})
-    }
+    };
 
-    async function changementWhishlist(){
-        var rawresponse = await fetch(`http://${adresseIP}:3000/talents/whishlist`, {
+    async function changementWishlist(){
+        // requête vers le backend pour ajouter/supprimer les restaurants dans la wishlist
+        var rawresponse = await fetch(`http://${adresseIP}:3000/talents/wishlist`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `token=${profilToDisplay.token}&id=${resto._id}`
         })  
         var response = await rawresponse.json()
+        // mise à jour du profil talent avec nouvelles données de wishlist
         onChangeProfil(response.profil)
-    }
+        setWishlist(response.profil.wishlistTalent)
+    };
+
     function changementCoeur(coeur){
         if(coeur ==='heart'){
             return('heart-o')
         } else {
             return('heart')
         }
-    }
+    };
 
-    var cuisine = ' '
+    // préparation des données pour leur affichage :
+    var cuisine = ' ';
     if(resto.typeOfFood){
         for(var i=0; i<resto.typeOfFood.length; i++){
             if(i==resto.typeOfFood.length-1){
@@ -53,18 +59,20 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                 cuisine+=resto.typeOfFood[i] + ', '
             }
         }
-    }
-    var clientele = ' '
+    };
+
+    var clientele = ' ';
     if(resto.clientele){
         for(var i=0; i<resto.clientele.length; i++){
             if(i==resto.clientele.length-1){
                 clientele+= resto.clientele[i]
             } else {
-                clientele+=resto.clientele[i] + ', '
+                clientele+=`${clientele+=resto.clientele[i]}, `
             }
         }
-    }
-    var ambiance = ' '
+    };
+
+    var ambiance = ' ';
     if(resto.typeOfRestaurant){
         for(var i=0; i<resto.typeOfRestaurant.length; i++){
             if(i==resto.typeOfRestaurant.length-1){
@@ -73,13 +81,15 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                 ambiance+=resto.typeOfRestaurant[i] + ', '
             }
         }
-    }
+    };
+
     var iconEuro = <Icon
-        name='euro'
-        size={18}
-        color='#4b6584'
-        style={{marginRight:10}}
-    />
+                        name='euro'
+                        size={18}
+                        color='#4b6584'
+                        style={{marginRight:10}}
+                    />
+
     if(resto.pricing == 0){
         var prix = iconEuro
     } else if(resto.pricing == 1){
@@ -88,55 +98,82 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
         var prix = <Text>{iconEuro}{iconEuro}{iconEuro}</Text>
     } else {
         var prix = '--'
-    }
+    };
     
   return (
       <View>
           <Overlay 
                 isVisible={visible}
-                overlayStyle={{flex:1, width:'90%'}}
+                overlayStyle={{flex:0.9, width:'90%'}}
             >
-              <View style={{flex:1, margin:20}}>
+              <View style={{flex:1, margin:10}}>
                 <Text style={styles.titreOverlay}>{resto.name}</Text>
-                <View style={{flex:2}}>
+                <View style={{flex:3}}>
                     <Image
                         source={{ uri: resto.photo }}
-                        style={{ width: '100%', height:100, marginTop:5}}
+                        style={{flex:1, width: '100%', marginTop:5, borderRadius:10}}
                         PlaceholderContent={<ActivityIndicator />}
                     />
                 </View>
-                <View style={{flex:1, padding:10}}>
-                    <Text style={{...styles.desciptifOverlay}, {textAlign:'center'}}>{prix}</Text>
-                    
-                    <Text style={styles.desciptifOverlay}><Icon
-                            name='cutlery'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        />
-                    {` ${cuisine}`}
-                    </Text>
-                    <Text style={styles.desciptifOverlay}><Icon
-                            name='users'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${clientele}`}
-                    </Text>
-                    <Text style={styles.desciptifOverlay}>
-                        <Icon
-                            name='info-circle'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${ambiance}`} </Text>
-                    
-                    
+                <View style={{flex:2, justifyContent:'center', flexDirection:'row'}}>
+                    <View>
+                        <View style={{flexDirection:'row', marginTop:2}}>
+                            <View>
+                                <Badge
+                                    badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                    containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                    value={<Icon
+                                        name='cutlery'
+                                        size={14}
+                                        color='#4b6584'
+                                    />}
+                                /> 
+                            </View>
+                            <Text style={styles.desciptif}>
+                            {` ${cuisine}`}
+                            </Text>
+                        </View>
+                        <View style={{flexDirection:'row', marginTop:2}}>
+                            <View>
+                                <Badge
+                                    badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                    containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                    value={<Icon
+                                        name='users'
+                                        size={14}
+                                        color='#4b6584'
+                                    />}
+                                /> 
+                            </View>
+                            <Text style={styles.desciptif}>
+                            {` ${clientele}`}
+                            </Text>
+                        </View>
+                        <View style={{flexDirection:'row', marginTop:2}}>
+                            <View>
+                                <Badge
+                                    badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                    containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                    value={<Icon
+                                        name='info-circle'
+                                        size={14}
+                                        color='#4b6584'
+                                    />}
+                                /> 
+                            </View>
+                            <Text style={styles.desciptif}>
+                            {` ${ambiance}`}
+                            </Text>
+                        </View>
+                    </View>
+                    <Badge
+                        badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center', marginLeft:50}}
+                        containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                        value={prix}
+                    /> 
                 </View>
                 
-                <MapView style={{flex : 4, borderRadius:10, width:'100%'}}
+                <MapView style={{flex:4, borderRadius:10, width:'100%'}}
                     initialRegion={{
                     latitude: resto.adresselgtlat.coordinates[1],
                     longitude: resto.adresselgtlat.coordinates[0],
@@ -159,46 +196,74 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                     
                 </MapView>
 
-                <View style={{flex:1, marginTop:20}}>
-                    <Text style={styles.desciptifOverlay}>
-                        <Icon
-                            name='map-marker'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
+                <View style={{flex:2, marginTop:20}}>
+                <View style={{flexDirection:'row', marginTop:2, justifyContent:'center'}}>
+                    <View >
+                        <Badge
+                            badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                            containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                            value={<Icon
+                                name='map-marker'
+                                size={14}
+                                color='#4b6584'
+                            />}
                         /> 
-                        {` ${resto.adress}`}
+                    </View>
+                    <Text style={styles.desciptif}>
+                    {` ${resto.adress}`}
                     </Text>
+                </View>
                         
-                    <Text style={styles.desciptifOverlay}>
-                        <Icon
-                            name='phone'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
+                <View style={{flexDirection:'row', marginTop:2, justifyContent:'center'}}>
+                    <View >
+                        <Badge
+                            badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                            containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                            value={<Icon
+                                name='phone'
+                                size={14}
+                                color='#4b6584'
+                            />}
                         /> 
-                        {` ${resto.phone}`}
+                    </View>
+                    <Text style={styles.desciptif}>
+                    {` ${resto.phone}`}
                     </Text>
+                </View>
             
-                    <Text style={styles.desciptifOverlay}>
-                        <Icon
-                            name='envelope-o'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
+                <View style={{flexDirection:'row', marginTop:2, justifyContent:'center'}}>
+                    <View >
+                        <Badge
+                            badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                            containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                            value={<Icon
+                                name='envelope-o'
+                                size={14}
+                                color='#4b6584'
+                            />}
                         /> 
-                        {` ${resto.email}`}
+                    </View>
+                    <Text style={styles.desciptif}>
+                    {` ${resto.email}`}
                     </Text>
+                </View>
                 
-                    <Text style={styles.desciptifOverlay}>
-                        <Icon
-                            name='link'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
+                <View style={{flexDirection:'row', marginTop:2, justifyContent:'center'}}>
+                    <View >
+                        <Badge
+                            badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                            containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                            value={<Icon
+                                name='link'
+                                size={14}
+                                color='#4b6584'
+                            />}
                         /> 
-                        {` ${resto.website}`}
+                    </View>
+                    <Text style={styles.desciptif}>
+                    {` ${resto.website}`}
                     </Text>
+                </View>
                 </View>
                 <Button 
                     onPress={()=>{setVisible(false)}}
@@ -209,7 +274,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
             </Overlay>
             
       
-        <ScrollView >
+        <ScrollView style={{flex:1}}>
             <Image
                 source={{ uri: resto.photo }}
                 style={{ width: '100%',  marginTop:5, borderRadius:10}}
@@ -233,73 +298,126 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                 >
                 <View style={{ flex: 5 }} >
                     
-                    <Text style={styles.desciptif}>
-                        <Icon
-                        name='map-marker'
-                        size={12}
-                        color='#4b6584'
-                        style={{marginRight:10}}
-                    /> 
+                    <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', padding:3}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='map-marker'
+                                    size={14}
+                                    color='#4b6584'
+                                    // style={{marginRight:10}}
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
                         {` ${resto.adress}`}
-                    </Text>
+                        </Text>
+                    </View>
                         
-                    <Text style={styles.desciptif}>
-                        <Icon
-                            name='phone'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
+                    <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='phone'
+                                    size={14}
+                                    color='#4b6584'
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
                         {` ${resto.phone}`}
-                    </Text>
+                        </Text>
+                    </View>
             
-                    <Text style={styles.desciptif}>
-                        <Icon
-                            name='envelope-o'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
+                    <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='envelope-o'
+                                    size={14}
+                                    color='#4b6584'
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
                         {` ${resto.email}`}
-                    </Text>
+                        </Text>
+                    </View>
                 
-                    <Text style={styles.desciptif}>
-                        <Icon
-                            name='link'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
+                    <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='link'
+                                    size={14}
+                                    color='#4b6584'
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
                         {` ${resto.website}`}
-                    </Text>
+                        </Text>
+                    </View>
                 </View>
                 
-                <View style={{  flex: 4}} >
-                    <Text style={styles.desciptif}> <Icon
-                            name='cutlery'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        />
-                    {` ${cuisine}`}
-                    </Text>
-                    <Text style={styles.desciptif}><Icon
-                            name='users'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
+                {/* <View style={{  flex: 4}} >
+                <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='cutlery'
+                                    size={14}
+                                    color='#4b6584'
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
+                        {` ${cuisine}`}
+                        </Text>
+                    </View>
+                    <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='users'
+                                    size={14}
+                                    color='#4b6584'
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
                         {` ${clientele}`}
-                    </Text>
-                    <Text style={styles.desciptif}>
-                        <Icon
-                            name='info-circle'
-                            size={12}
-                            color='#4b6584'
-                            style={{marginRight:10}}
-                        /> 
-                        {` ${ambiance}`} </Text>
-                </View>
+                        </Text>
+                    </View>
+                    <View style={{flexDirection:'row'}}>
+                        <View>
+                            <Badge
+                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
+                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
+                                value={<Icon
+                                    name='info-circle'
+                                    size={14}
+                                    color='#4b6584'
+                                />}
+                            /> 
+                        </View>
+                        <Text style={styles.desciptif}>
+                        {` ${ambiance}`}
+                        </Text>
+                    </View>
+                </View> */}
 
                 <View style={{  flex: 2}} >
                     <Text style={{...styles.desciptif}, {textAlign:'center'}}>{prix}</Text>
@@ -308,7 +426,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                         size={24}
                         color='#4b6584'
                         style={{margin:10, textAlign:'center'}}
-                        onPress={()=>{{setCoeur(changementCoeur(coeur)); changementWhishlist()}}}
+                        onPress={()=>{{setCoeur(changementCoeur(coeur)); changementWishlist()}}}
                     />
                 </View>
                 </View>
@@ -329,7 +447,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
         </ScrollView>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -360,12 +478,12 @@ const styles = StyleSheet.create({
   desciptif:{
     textAlign:'left',
     color:'#4b6584',
-    fontSize:15,
+    fontSize:12,
   },
   desciptifOverlay:{
     textAlign:'left',
     color:'#4b6584',
-    fontSize:18,
+    fontSize:12,
     textAlign:'center',
   },
   titreOverlay:{
@@ -384,11 +502,11 @@ function mapDispatchToProps (dispatch) {
             dispatch({type:'addProfil', profil:profil})
         }
     }
-}
+};
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
-}
+};
 
 export default connect(
   mapStateToProps, 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView} from 'react-native';
-import {connect} from 'react-redux'
-import { Divider, ListItem, Overlay, Button, Image, Accessory} from 'react-native-elements'
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator} from 'react-native';
+import {connect} from 'react-redux';
+import { Divider, ListItem, Overlay, Button, Image, Accessory} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import HeaderBar from '../components/HeaderBar';
@@ -12,7 +12,6 @@ function MonProfilRestaurant({profilToDisplay, navigation}) {
   const [profil, setProfil] = useState(profilToDisplay);
   const[contenu, setContenu] = useState(<Text></Text>);
   const [flexOverlay, setFlexOverlay] = useState(0.5);
-  const [modalLogoutVisible, setModallogoutVisible] = useState(false)
   
   function logout(){
     navigation.navigate('Home')
@@ -118,7 +117,10 @@ function MonProfilRestaurant({profilToDisplay, navigation}) {
   
   return (
     <Divider style={styles.container}>
+
       <HeaderBar page='Mon profil' logout={logout}/>
+
+      {/* Overlay permettant l'affichage dynamique des informations selon la ligne de la liste choisie : */}
       <Overlay 
           isVisible={visible}
           overlayStyle={{flex:flexOverlay, width:'90%'}}>
@@ -131,21 +133,20 @@ function MonProfilRestaurant({profilToDisplay, navigation}) {
               titleStyle={{color:'#4b6584'}}
               title='OK'/>
           </View>
-
         </View>
       </Overlay>
+
       <View style={{flex:1, marginVertical:10, alignItems:'center'}}>
-        
         <Text style={{color:'#4b6584', fontWeight:'bold', fontSize:20}}>
           {profil.name}
           </Text>
         <Image
           source={{ uri: profil.photo }}
           style={{borderRadius:10, width: 400, height: 200 }}
-          
-        ><Accessory style={{width:40, height:40, borderRadius:50 , marginRight:20, marginBottom:20}}
+          PlaceholderContent={<ActivityIndicator />}
+        >
+        <Accessory style={{width:40, height:40, borderRadius:50 , marginRight:20, marginBottom:20}}
         onPress={()=>{navigation.navigate('PhotoScreen')}}/></Image>
-        
       </View>
       
       <View style={{flex:2, width:'100%'}}>
@@ -164,12 +165,11 @@ function MonProfilRestaurant({profilToDisplay, navigation}) {
               </ListItem>
             ))
           }
-          
         </ScrollView>
       </View>
     </Divider>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -188,13 +188,6 @@ const styles = StyleSheet.create({
   }
 });
 
-function mapDispatchToProps (dispatch) {
-  return {
-      onChangeProfil: function(profil){
-          dispatch({type:'addProfil', profil:profil})
-      }
-  }
-}
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
@@ -202,5 +195,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps, 
-  mapDispatchToProps
+  null
 )(MonProfilRestaurant);

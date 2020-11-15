@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
+import { View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import { Camera } from 'expo-camera';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
 import { Button, Overlay } from 'react-native-elements';
-
 import adresseIP from '../adresseIP';
 
 function PhotoScreen({profilToDisplay, onLogin, navigation}) {
@@ -13,7 +12,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.front);
   const [flash, setFlash] = useState(Camera.Constants.FlashMode.off);
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
   var camera = useRef(null);
 
@@ -38,6 +37,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
           backgroundColor: 'transparent',
           flexDirection: 'row',
         }}>
+
         <TouchableOpacity
           style={{
             alignSelf: 'flex-end',
@@ -72,60 +72,58 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
                 : Camera.Constants.FlashMode.torch
             );
           }}
-        >
+          >
           <IconFontAwesome
               name="flash"
               size={30}
               color="#fed330"
           />
-          
-        </TouchableOpacity>
-        <View style={{ width:70, justifyContent:'flex-end', marginBottom:10}}>
-        <Button
-            icon={
-              <IconFontAwesome
-                name="camera"
-                size={25}
-                color="#4b6584"
-              />
-            }
-            // title="  Prendre une photo"
-            buttonStyle={{ backgroundColor: "#fed330", borderRadius:50, alignSelf:'center', width:60, height:60 }}
-            type="solid"
-            onPress={async () => {
-              setVisible(true);
-              if (camera) {
-                let photo = await camera.takePictureAsync({ quality: 0.3 });
+          </TouchableOpacity>
 
-                var data = new FormData();
-
-                data.append('photo', {
-                  uri: photo.uri,
-                  type: 'image/jpeg',
-                  name: `${profilToDisplay.token}photo.jpg`,
-                });
-
-                var rawResponse = await fetch(`http://${adresseIP}:3000/upload/${profilToDisplay.token}`, {
-                  method: 'post',
-                  body: data
-                })
-
-                var response = await rawResponse.json()
-                console.log(response)
-                setVisible(false)
-                onLogin(response)
-                if(response.name){
-                  navigation.navigate('Talents')
-                } else {
-                  navigation.navigate('Restaurants')
-                }
-                
+          <View style={{ width:70, justifyContent:'flex-end', marginBottom:10}}>
+            <Button
+              icon={
+                <IconFontAwesome
+                  name="camera"
+                  size={25}
+                  color="#4b6584"
+                />
               }
-            }}
-            />
-            </View>
-      </View>
+              buttonStyle={{ backgroundColor: "#fed330", borderRadius:50, alignSelf:'center', width:60, height:60 }}
+              type="solid"
+              onPress={async () => {
+                setVisible(true);
+                if (camera) {
+                  let photo = await camera.takePictureAsync({ quality: 0.3 });
+
+                  var data = new FormData();
+
+                  data.append('photo', {
+                    uri: photo.uri,
+                    type: 'image/jpeg',
+                    name: `${profilToDisplay.token}photo.jpg`,
+                  });
+
+                  var rawResponse = await fetch(`http://${adresseIP}:3000/upload/${profilToDisplay.token}`, {
+                    method: 'post',
+                    body: data
+                  })
+
+                  var response = await rawResponse.json()
+                  setVisible(false)
+                  onLogin(response)
+                  if(response.name){
+                    navigation.navigate('Talents')
+                  } else {
+                    navigation.navigate('Restaurants')
+                  }
+                }
+              }}
+              />
+          </View>
+        </View>
     </Camera>
+
   } else {
     cameraDisplay = <View style={{ flex: 1 }}></View>
   }
@@ -134,30 +132,30 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
     return(
         <View style={{flex:1}}>
           <Overlay isVisible={visible} width="auto" height="auto">
-          <View style={{justifyContent: "center" }}>
-            <ActivityIndicator size="large" color='#4b6584'/>
-          </View>
+            <View style={{justifyContent: "center" }}>
+              <ActivityIndicator size="large" color='#4b6584'/>
+            </View>
           </Overlay>
 
           {cameraDisplay}
 
-         
   </View>
     )
 }
+
 function mapDispatchToProps (dispatch) {
   return {
       onLogin: function(profil){
           dispatch({type:'addProfil', profil:profil})
       }
       }
-  }
+}
 
 function mapStateToProps(state) {
     return { profilToDisplay : state.profil }
-  }
+}
   
-  export default connect(
-    mapStateToProps, 
-    mapDispatchToProps
-  )(PhotoScreen);
+export default connect(
+  mapStateToProps, 
+  mapDispatchToProps
+)(PhotoScreen);

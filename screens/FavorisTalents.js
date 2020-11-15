@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View} from 'react-native';
-import {connect} from 'react-redux'
+import {connect} from 'react-redux';
 import HeaderBar from '../components/HeaderBar';
 import CardRestaurant from '../components/CardRestaurant';
 import { withNavigationFocus } from 'react-navigation';
@@ -11,8 +11,8 @@ function FavorisTalents({profilToDisplay, isFocused}) {
     navigation.navigate('Home')
   };
 
-  const [liste, setListe] = useState([])
-  const [profil, setProfil] = useState(profilToDisplay)
+  const [liste, setListe] = useState([]);
+  const [profil, setProfil] = useState(profilToDisplay);
 
   useEffect(()=>{
     if(isFocused){
@@ -27,7 +27,7 @@ function FavorisTalents({profilToDisplay, isFocused}) {
     setListe(response)
     }
     cherche()
-  }, [profil])
+  }, [profil]);
 
   return (
     
@@ -47,9 +47,8 @@ function FavorisTalents({profilToDisplay, isFocused}) {
         </ScrollView>
       </View>
     </View>
-
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -77,11 +76,11 @@ function mapDispatchToProps (dispatch) {
           dispatch({type:'addProfil', profil:profil})
       }
   }
-}
+};
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
-}
+};
 
 export default connect(
   mapStateToProps, 

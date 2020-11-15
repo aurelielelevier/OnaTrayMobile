@@ -14,10 +14,10 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
     navigation.navigate('Home')
   };
 
-  const[visible, setVisible] = useState(false)
-  const [profil, setProfil] = useState(profilToDisplay)
-  const[contenu, setContenu] = useState(<Text></Text>)
-  const [flexOverlay, setFlexOverlay] = useState(0.5)
+  const[visible, setVisible] = useState(false);
+  const [profil, setProfil] = useState(profilToDisplay);
+  const[contenu, setContenu] = useState(<Text></Text>);
+  const [flexOverlay, setFlexOverlay] = useState(0.5);
   
   useEffect(()=>{
     if(isFocused){
@@ -25,6 +25,7 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
     }
   },[isFocused]);
 
+  // prépararion des données à afficher : 
   const list = [{ title: 'Mes coordonnées', icon: 'user', contenu:'adresse tel'},
                 {title: 'Ma formation', icon: 'briefcase', contenu:'formation 1 - PAris Bac'},
                 {title: 'Mon expérience', icon: 'vcard-o', contenu:'expérience 1 sklsldkfj  lkj dflkjsdf '},
@@ -105,14 +106,18 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
     var contenu = 
       <View style={{flex:1}}>
         <View style={{flex:1, borderRadius:10, backgroundColor:"#fed330", paddingTop:10}}>
-        <Text style={styles.title}>
-          <FontAwesome name={list[i].icon} size={24} color="#4b6584" />
-        {` ${list[i].title}`}</Text>
+          <Text style={styles.title}>
+            <FontAwesome name={list[i].icon} size={24} color="#4b6584" />
+            {` ${list[i].title}`}
+          </Text>
         </View>
+
         <View style={{flex:3, borderRadius:10, backgroundColor:"#d1d8e0", marginTop:30, padding:20}}>
           {listeDeDonnees[i]}
         </View>
+
       </View>
+
     setFlexOverlay(0.5)
     setContenu(contenu)
   };
@@ -137,26 +142,25 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
         </View>
       </Overlay>
 
-      <View style={{flex:1, marginTop:30, alignItems:'center'}}>
+      <View style={{flex:1, marginTop:10, alignItems:'center'}}>
         <Avatar
           rounded
           size="xlarge"
           source={{
               uri:profil.avatar,
           }}
-          
         >
           <Accessory style={{width:40, height:40, borderRadius:50 }}
                     onPress={()=>{navigation.navigate('PhotoScreen')}}/>
         </Avatar>
 
-        <Text style={{color:'#4b6584', marginTop:20, fontWeight:'bold', fontSize:20}}>
+        <Text style={{color:'#4b6584', marginTop:10, fontWeight:'bold', fontSize:20}}>
           {`${profil.firstName} ${profil.lastName}`}
         </Text>
       </View>
 
       <View style={{flex:2, width:'100%'}}>
-        <ScrollView style={{ marginTop: 20, marginBottom:10}}>
+        <ScrollView style={{ marginTop: 10}}>
           {
             list.map((item, i) => (
               <ListItem key={i} 
@@ -185,7 +189,7 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
       </View>
     </Divider>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -212,7 +216,7 @@ const styles = StyleSheet.create({
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
-}
+};
 
 export default connect(
   mapStateToProps, 

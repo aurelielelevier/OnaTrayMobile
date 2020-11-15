@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TextInput} from 'react-native';
-import {connect} from 'react-redux'
-import {Button, CheckBox} from 'react-native-elements'
+import {connect} from 'react-redux';
+import {Button, CheckBox} from 'react-native-elements';
 import MultiSelect from 'react-native-multiple-select';
 import HeaderBar from '../components/HeaderBar';
 import adresseIP from '../adresseIP';
@@ -9,21 +9,24 @@ import items from '../données/itemsTalents';
 
 function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
   
-  const [enPosteChoix, setEnPosteChoix] = useState(true)
-  const [enRechercheChoix, setEnrechercheChoix]= useState(true)
-  const [villeFormation, setVilleFormation] = useState('')
-  const [ecole, setEcole] = useState('')
-  const [anneeFormation, setAnneeFormation] = useState('')
-  const [diplome, setDiplome] = useState('')
-  const [jobChoosen, setJobChoosen] = useState([])
-  const [langues, setLangues] = useState([])
-  const [contrats, setContrat] = useState([])
-  const [entreprise, setEntreprise] = useState('')
-  const [villeExperience, setVilleExperience] = useState('')
-  const [posteOccupe, setPosteOccupe] = useState('')
-  const [débutExperience, setDébutExperience] = useState('')
-  const [finExperience, setfinExperience] = useState('')
+  const [enPosteChoix, setEnPosteChoix] = useState(true);
+  const [enRechercheChoix, setEnrechercheChoix]= useState(true);
+  const [villeFormation, setVilleFormation] = useState('');
+  const [ecole, setEcole] = useState('');
+  const [anneeFormation, setAnneeFormation] = useState('');
+  const [diplome, setDiplome] = useState('');
+  const [jobChoosen, setJobChoosen] = useState([]);
+  const [langues, setLangues] = useState([]);
+  const [contrats, setContrat] = useState([]);
+  const [entreprise, setEntreprise] = useState('');
+  const [villeExperience, setVilleExperience] = useState('');
+  const [posteOccupe, setPosteOccupe] = useState('');
+  const [débutExperience, setDébutExperience] = useState('');
+  const [finExperience, setfinExperience] = useState('');
 
+  function logout(){
+    navigation.navigate('Home')
+  };
 
   const onSelectedItemsJob = (selectedItems) => {
     setJobChoosen(selectedItems)
@@ -36,20 +39,23 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
   };
 
   async function valider() {
+    // Requête vers le backend pour mettre à jour les informations du talent en base de données
     var formation = JSON.stringify([{school: ecole, city:villeFormation, year:anneeFormation, diploma:diplome}])
     var experience = JSON.stringify([{firm: entreprise, city:villeExperience, job: posteOccupe, rangeDate:[débutExperience, finExperience]}])
     var rawResponse = await fetch(`http://${adresseIP}:3000/talents/informations`, {
-      method: 'POST',
+      method: 'PUT',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profilToDisplay.token}&recherche=${enRechercheChoix}&poste=${enPosteChoix}&langage=${JSON.stringify(langues)}&job=${JSON.stringify(jobChoosen)}&experience=${experience}&formation=${formation}&contrat=${JSON.stringify(contrats)}`
     })
     var profilAjour = await rawResponse.json()
+    // Mise à jour dans le store du profil avec les nouvelles données enregistrées
     onLogin(profilAjour)
-  }
+  };
 
   return (
     <View style={{flex:1}}>
-      <HeaderBar page= 'Inscription'/>
+
+      <HeaderBar page= 'Inscription' logout={logout}/>
       
       <View style={{flex:1, alignItems:'center'}}>
 
@@ -247,27 +253,21 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
                     onPress={()=>{setEnrechercheChoix(false)}}
                   />
                 </View>
+              </View>
 
-            
-                
-                </View>
-                <Button 
-                    onPress={()=>{{valider(); navigation.navigate('SignUpTalent3')}}}
-                    buttonStyle={styles.button}
-                    title='Valider'
-                    titleStyle={{color:'#4b6584'}}
-                    color="#4b6584"
-                    />
-                    
-            
+              <Button 
+                  onPress={()=>{{valider(); navigation.navigate('SignUpTalent3')}}}
+                  buttonStyle={styles.button}
+                  title='Valider'
+                  titleStyle={{color:'#4b6584'}}
+                  color="#4b6584"
+                  />
           </ScrollView>
-      </KeyboardAvoidingView>
-        
+        </KeyboardAvoidingView>
+      </View>
     </View>
-  </View>
-    
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -323,15 +323,15 @@ const styles = StyleSheet.create({
 
 function mapDispatchToProps (dispatch) {
   return {
-      onLogin: function(profil){
-          dispatch({type:'addProfil', profil:profil})
-      }
-      }
+    onLogin: function(profil){
+        dispatch({type:'addProfil', profil:profil})
+    }
   }
+};
 
 function mapStateToProps(state) {
   return { profilToDisplay: state.profil}
-}
+};
 
 export default connect(
   mapStateToProps, 

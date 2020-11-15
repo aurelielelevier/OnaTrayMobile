@@ -1,32 +1,33 @@
 import React, {useState, useEffect} from 'react';
-import {connect} from 'react-redux'
-import {StyleSheet, ScrollView,Picker, Text, View} from 'react-native';
-import { CheckBox } from 'react-native-elements'
-import HeaderBar from '../components/HeaderBar'
+import {connect} from 'react-redux';
+import {StyleSheet, ScrollView, Picker, Text, View} from 'react-native';
+import { CheckBox } from 'react-native-elements';
+import HeaderBar from '../components/HeaderBar';
 import CardTalent from '../components/CardTalent';
 import { withNavigationFocus } from 'react-navigation';
 import adresseIP from '../adresseIP';
+import items from '../données/itemsTalents';
 
-const metiers = ['Voiturier', 'Serveur', 'Garçon de café', 'Plongeur', 'Runner', 'Sommelier',
-                    'Chef de rang', "Maître d'hôtel", 'Manager', 'Chef de cuisine', 'Chef de partie', 
-                  'Commis de cuisine', 'Pizzaiolo', 'Pâtissier'];
-
-const contrats = ['CDI', 'CDD', 'Extra'];
+//récupération des données métiers et contrats et création d'un tableau 
+const metiers = items.itemsPostes.map(item=> item.name);
+const contrats = items.itemsContrats.map(item=> item.name);
 
 function RechercheTalents({profilToDisplay, isFocused, navigation}) {
+
   function logout(){
     navigation.navigate('Home')
   };
-  const [profil, setProfil] = useState(profilToDisplay)
-  const [choixContrat, setChoixContrat] = useState('CDI')
-  const [metier, setMetier] = useState('Serveur')
-  const [posterecherché,setposterecherché]=useState(metier)
-  const [typedecontrat,settypedecontrat]=useState(contrats)
-  const [rechercheeffectuée,setrechercheeffectuée]=useState(false)
-  const [liste, setListe] = useState([])
+
+  const [profil, setProfil] = useState(profilToDisplay);
+  const [choixContrat, setChoixContrat] = useState('CDI');
+  const [metier, setMetier] = useState('Serveur');
+  const [posterecherché,setposterecherché]=useState(metier);
+  const [typedecontrat,settypedecontrat]=useState(contrats);
+  const [rechercheeffectuée,setrechercheeffectuée]=useState(false);
+  const [liste, setListe] = useState([]);
   
   useEffect(()=>{
-    //rechergement à chaque fois que la page est affichée
+    //rechargement du profil à chaque fois que la page est affichée (a pu être modifié sur une autre page)
     if(isFocused){
       setProfil(profilToDisplay)
     }
@@ -49,16 +50,19 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
         setProfil(response.profil)
      }
     cherche()
-  },[metier,choixContrat])
+  },[metier,choixContrat]);
 
   
   return (
     <View style={{flex:1}}>
+
       <HeaderBar page='Recherche de talents' logout={logout}/>
+
       <View style={{flex:1}}>
         <Text style={styles.titre}>Je cherche un(e) :</Text>
         <Picker
             selectedValue={metier}
+            itemStyle={{fontSize:14, fontWeight:'bold' , height:150, color:'#4b6584',}}
             mode='dropdown'
             selectionColor='red'
             style={{height: 30, width:'100%'}}
@@ -76,29 +80,30 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
             })
           }
         </Picker>
-        </View>
-        <View style={{ flexDirection:'row', marginTop:100, justifyContent:'center'}}>
+      </View>
+
+      <View style={{ flexDirection:'row', marginTop:50, justifyContent:'center'}}>
         {
-            contrats.map((contrat,i)=>{
-              return(
-                <CheckBox
-                  key={i+contrat}
-                  center
-                  title={contrat}
-                  color={'red'}
-                  containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0}}
-                  checkedIcon='dot-circle-o'
-                  uncheckedIcon='circle-o'
-                  checked={contrat===choixContrat?true:false}
-                  onPress={()=>{{setChoixContrat(contrat)}}}
-                />
-              )
-            })
-          }
-        </View>
+          contrats.map((contrat,i)=>{
+            return(
+              <CheckBox
+                key={i+contrat}
+                center
+                title={contrat}
+                color={'red'}
+                containerStyle={{backgroundColor:'rgba(255, 255, 255, 0)', borderWidth:0, margin:0}}
+                checkedIcon='dot-circle-o'
+                uncheckedIcon='circle-o'
+                checked={contrat===choixContrat?true:false}
+                onPress={()=>{{setChoixContrat(contrat)}}}
+              />
+            )
+          })
+        }
+      </View>
         
       <View style={{flex:3}}>
-        <ScrollView style={{marginTop: 20}}>
+        <ScrollView>
         {
           liste.map((talent,i)=> {
             return(
@@ -109,9 +114,8 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
         </ScrollView>
       </View>
     </View>
-    
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -135,22 +139,15 @@ const styles = StyleSheet.create({
   scrollview:{
     flex:5,
     backgroundColor: '#4b6584',
-
   }
 });
 
-function mapDispatchToProps (dispatch) {
-  return {
-      onChangeProfil: function(profil){
-          dispatch({type:'addProfil', profil:profil})
-      }
-  }
-}
+
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
-}
+};
 
 export default connect(
   mapStateToProps, 
-  mapDispatchToProps
+  null
 )(withNavigationFocus(RechercheTalents));

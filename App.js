@@ -31,7 +31,6 @@ var BottomNavigatorTalent = createBottomTabNavigator({
   'Mon Profil': MonProfilTalent,
   Restaurants: RechercheRestaurant,
   Favoris: Favoris,
-  Messagerie: HomeScreen,
 },
 
 {
@@ -45,9 +44,7 @@ var BottomNavigatorTalent = createBottomTabNavigator({
         iconName = 'search1';
       } else if (navigation.state.routeName == 'Favoris') {
         iconName = 'heart';
-      } else if (navigation.state.routeName == 'Messagerie') {
-        iconName = 'wechat';
-      } 
+      }
 
       return <AntDesign name={iconName} size={25} color={tintColor} />;
     },
@@ -67,7 +64,6 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
   'Mon Profil': MonProfilRestaurant,
   Talents: RechercheTalents,
   'Mes favoris': FavorisRestaurant,
-  Messagerie: HomeScreen
 },
 
 {
@@ -80,8 +76,6 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
         iconName = 'search1';
       } else if (navigation.state.routeName == 'Mes favoris') {
         iconName = 'hearto';
-      } else if (navigation.state.routeName == 'Messagerie') {
-        iconName = 'wechat';
       } 
 
       return <AntDesign name={iconName} size={25} color={tintColor} />;
