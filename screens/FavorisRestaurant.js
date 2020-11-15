@@ -6,7 +6,7 @@ import { withNavigationFocus } from 'react-navigation';
 import CardTalent from '../components/CardTalent';
 import adresseIP from '../adresseIP';
 
-function FavorisRestaurants({isFocused, profilToDisplay}) {
+function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
 
   function logout(){
       navigation.navigate('Home')
