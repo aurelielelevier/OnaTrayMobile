@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, Text, View} from 'react-native';
+import { Linking, StyleSheet, ScrollView, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import {connect} from 'react-redux';
@@ -96,12 +96,13 @@ async function changementWhishlist(){
                             />}
                         /> 
                     </View>
+                    
                     <Text style={styles.desciptif}>
                     {` ${talent.phone}`}
                     </Text>
                 </View>
                       
-                <View style={{flexDirection:'row', marginTop:2, justifyContent:'center'}}>
+                <View style={{ flexDirection:'row', marginTop:2, justifyContent:'center'}}>
                     <View >
                         <Badge
                             badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
@@ -117,6 +118,52 @@ async function changementWhishlist(){
                     {` ${talent.email}`}
                     </Text>
                 </View>
+                <View style={{flex:1, width:'100%',justifyContent:'space-around', marginTop:10, flexDirection:'row'}}> 
+                    <Button
+                        buttonStyle={{backgroundColor:'#4b6584', borderWidth:'none', alignItems:'center', borderRadius:10}}
+                        onPress={()=>{Linking.openURL(`tel:${talent.phone}`)}}
+                        icon={
+                          <Icon
+                            name="phone"
+                            size={15}
+                            color="white"
+                            style={{marginRight:10}}
+                          />
+                        }
+                        title="Appeler"
+                      />
+                    <Button
+                        buttonStyle={{backgroundColor:'#4b6584', borderWidth:'none', alignItems:'center', borderRadius:10}}
+                        onPress={()=>{Linking.openURL(`sms:${talent.phone}`)}}
+                        icon={
+                          <Icon
+                            name="comments"
+                            size={15}
+                            color="white"
+                            style={{marginRight:10}}
+                          />
+                        }
+                        title="Envoyer un SMS"
+                      />
+                  
+                   
+                  </View>
+                  <View style={{flex:1, width:'100%',justifyContent:'space-around', marginTop:10, flexDirection:'row'}}> 
+                    <Button
+                        buttonStyle={{backgroundColor:'#4b6584', borderWidth:'none', alignItems:'center', borderRadius:10}}
+                        onPress={()=>{Linking.openURL(`mailto:${talent.email}`)}}
+                                     
+                        icon={
+                          <Icon
+                            name="envelope-o"
+                            size={15}
+                            color="white"
+                            style={{marginRight:10}}
+                          />
+                        }
+                        title="Envoyer un email"
+                      />
+                  </View>
               </View>
 
               <Divider style={{marginBottom:10, alignItems:'center'}}/>
