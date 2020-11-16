@@ -3,7 +3,7 @@ import { ActivityIndicator, StyleSheet, Image, Text, View, TouchableHighlight, M
 import {connect} from 'react-redux';
 import {Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import adresseIP from '../adresseIP';
+import url from '../url';
 const image = require('../assets/image-carousel-2.jpg');
 const logo = require('../assets/logo-onatray.png');
 
@@ -16,7 +16,7 @@ function HomeScreen({navigation, onLogin}) {
 
   // Requête vers le backend pour voir si un utilisateur existe avec les identifiants email et mot de passe :
   async function signin() {
-    var rawResponse = await fetch(`http://${adresseIP}:3000/sign_in`, {
+    var rawResponse = await fetch(`http://${url}/sign_in`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `email=${valueEmail}&password=${valueMotDePasse}`

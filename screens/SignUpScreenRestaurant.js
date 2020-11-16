@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TouchableOpac
 import {connect} from 'react-redux';
 import {Button, Overlay} from 'react-native-elements';
 import HeaderBar from '../components/HeaderBar';
-import adresseIP from '../adresseIP';
+import url from '../url';
 import Autocomplete from 'react-native-autocomplete-input';
 
 function SignUpScreenRestaurant ({navigation, onLogin}) {
@@ -70,7 +70,7 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
     };
     
     if(validation){
-      var rawResponse = await fetch(`http://${adresseIP}:3000/restaurants/createAccount`, {
+      var rawResponse = await fetch(`http://${url}/restaurants/createAccount`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `restaurantEmail=${valueEmail}&restaurantPassword=${valueMotDePasse}&restaurantSiret=${siret}&restaurantName=${nom}&phoneRestaurant=${telephone}&restaurantAdress=${adresse}&lnglat=${JSON.stringify(latlngDomicile)}&restaurantWebsite=${site}`

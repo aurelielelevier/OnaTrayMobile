@@ -5,7 +5,7 @@ import { Camera } from 'expo-camera';
 import IconFontAwesome from 'react-native-vector-icons/FontAwesome';
 import IconIonic from 'react-native-vector-icons/Ionicons';
 import { Button, Overlay } from 'react-native-elements';
-import adresseIP from '../adresseIP';
+import url from '../url';
 
 function PhotoScreen({profilToDisplay, onLogin, navigation}) {
     
@@ -104,7 +104,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
                     name: `${profilToDisplay.token}photo.jpg`,
                   });
 
-                  var rawResponse = await fetch(`http://${adresseIP}:3000/upload/${profilToDisplay.token}`, {
+                  var rawResponse = await fetch(`http://${url}/upload/${profilToDisplay.token}`, {
                     method: 'post',
                     body: data
                   })

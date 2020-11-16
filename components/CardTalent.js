@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import {connect} from 'react-redux';
 import {Button, Overlay, Avatar, Divider, Badge} from 'react-native-elements';
-import adresseIP from '../adresseIP';
+import url from '../url';
 
 function CardTalent({profilToDisplay, talent, onChangeProfil}) {
   
@@ -54,7 +54,7 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
 
 async function changementWhishlist(){
   // requête vers le backend pour ajouter/supprimer le talent dans la wishlist
-    var rawresponse = await fetch(`http://${adresseIP}:3000/restaurants/wishlist`, {
+    var rawresponse = await fetch(`http://${url}/restaurants/wishlist`, {
     method: 'POST',
     headers: {'Content-Type':'application/x-www-form-urlencoded'},
     body: `token=${profilToDisplay.token}&id=${talent._id}`

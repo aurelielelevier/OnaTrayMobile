@@ -5,7 +5,7 @@ import { CheckBox } from 'react-native-elements';
 import HeaderBar from '../components/HeaderBar';
 import CardTalent from '../components/CardTalent';
 import { withNavigationFocus } from 'react-navigation';
-import adresseIP from '../adresseIP';
+import url from '../url';
 import items from '../données/itemsTalents';
 
 //récupération des données métiers et contrats et création d'un tableau 
@@ -40,7 +40,7 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
     // - qui peuvent répondre au métier dont le restaurateur a besoin
     async function cherche(){
     var criteres = JSON.stringify({posterecherché: metier, typedecontrat:choixContrat})
-    var rechercheListe = await fetch(`http://${adresseIP}:3000/restaurants/recherche-liste-talents`, {
+    var rechercheListe = await fetch(`http://${url}/restaurants/recherche-liste-talents`, {
         method:'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `token=${profil.token}&criteres=${criteres}`

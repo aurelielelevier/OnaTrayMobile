@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import {Button, CheckBox} from 'react-native-elements';
 import MultiSelect from 'react-native-multiple-select';
 import HeaderBar from '../components/HeaderBar';
-import adresseIP from '../adresseIP';
+import url from '../url';
 import items from '../données/itemsTalents';
 
 function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
@@ -42,7 +42,7 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
     // Requête vers le backend pour mettre à jour les informations du talent en base de données
     var formation = JSON.stringify([{school: ecole, city:villeFormation, year:anneeFormation, diploma:diplome}])
     var experience = JSON.stringify([{firm: entreprise, city:villeExperience, job: posteOccupe, rangeDate:[débutExperience, finExperience]}])
-    var rawResponse = await fetch(`http://${adresseIP}:3000/talents/informations`, {
+    var rawResponse = await fetch(`http://${url}/talents/informations`, {
       method: 'PUT',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profilToDisplay.token}&recherche=${enRechercheChoix}&poste=${enPosteChoix}&langage=${JSON.stringify(langues)}&job=${JSON.stringify(jobChoosen)}&experience=${experience}&formation=${formation}&contrat=${JSON.stringify(contrats)}`

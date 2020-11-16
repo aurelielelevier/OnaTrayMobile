@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import HeaderBar from '../components/HeaderBar';
 import CardRestaurant from '../components/CardRestaurant';
 import { withNavigationFocus } from 'react-navigation';
-import adresseIP from '../adresseIP';
+import url from '../url';
 
 function FavorisTalents({profilToDisplay,navigation, isFocused}) {
   function logout(){
@@ -22,7 +22,7 @@ function FavorisTalents({profilToDisplay,navigation, isFocused}) {
  
   useEffect(() => {
     async function cherche (){
-    var rawResponse = await fetch(`http://${adresseIP}:3000/talents/affiche-whishlist/${profil.token}`)
+    var rawResponse = await fetch(`http://${url}/talents/affiche-whishlist/${profil.token}`)
     var response = await rawResponse.json()
     setListe(response)
     }

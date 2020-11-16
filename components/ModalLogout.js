@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {Text, View} from 'react-native';
 
-export default function ModalLogout(props) {
+export default function ModalLogout({visible, navigation}) {
 
-    const[visible, setVisible] = useState(props.visible);
+    const[visible, setVisible] = useState(visible);
   
     return (
       

@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, Text, View, KeyboardAvoidingView, TextInput} fr
 import {connect} from 'react-redux';
 import {Button, Overlay} from 'react-native-elements';
 import HeaderBar from '../components/HeaderBar';
-import adresseIP from '../adresseIP';
+import url from '../url';
 
 function SignUpScreenTalent ({navigation, onLogin }) {
   
@@ -38,7 +38,7 @@ function SignUpScreenTalent ({navigation, onLogin }) {
     
     if(validation){
       // requête au backent pour enregistrer un nouvel utilisateur
-      var rawResponse = await fetch(`http://${adresseIP}:3000/talents/createAccount`, {
+      var rawResponse = await fetch(`http://${url}/talents/createAccount`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `email=${valueEmail}&password=${valueMotDePasse}&firstName=${prenom}&lastName=${nom}&phone=${telephone}`

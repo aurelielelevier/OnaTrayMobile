@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import MultiSelect from 'react-native-multiple-select';
 import CardRestaurant from '../components/CardRestaurant';
 import { withNavigationFocus } from 'react-navigation';
-import adresseIP from '../adresseIP';
+import url from '../url';
 import items from '../données/itemsRestaurants';
 
 const ambiance = items.itemsAmbiance.map(item => item.name);
@@ -14,7 +14,7 @@ const cuisine = items.itemsCuisine.map(item => item.name);
 const prix = items.itemsPrix.map(item => item.id);
 const clientele = items.itemsClientele.map(item => item.name);
 
-function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
+function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
 
   function logout(){
     navigation.navigate('Home')
@@ -66,7 +66,7 @@ function Recherche({onChangeProfil, profilToDisplay, isFocused}) {
   useEffect(() => {
     var criteres = JSON.stringify({ambiance: selectedItemsAmbiance, cuisine: selectedItemsCuisine, prix: selectedItemsPrix, type:selectedItemsClientele, zone:zone})
     async function cherche (){
-    var rawResponse = await fetch(`http://${adresseIP}:3000/talents/recherche-liste-restaurants`, {
+    var rawResponse = await fetch(`http://${url}/talents/recherche-liste-restaurants`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profil.token}&restaurant=${criteres}`

@@ -6,7 +6,7 @@ import HeaderBar from '../components/HeaderBar';
 import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
 import Autocomplete from 'react-native-autocomplete-input';
-import adresseIP from '../adresseIP';
+import url from '../url';
 
 function SignUpScreenTalent3 ({navigation, onLogin, profilToDisplay}) {
   
@@ -26,7 +26,7 @@ function SignUpScreenTalent3 ({navigation, onLogin, profilToDisplay}) {
     // Pour un enregistrement en base de données 
     var listePoints = JSON.stringify(polygoneinverse)
     var lnglat = JSON.stringify(latlngDomicile)
-    var rawResponse= await fetch(`http://${adresseIP}:3000/talents/envoi-secteur`, {
+    var rawResponse= await fetch(`http://${url}/talents/envoi-secteur`, {
       method:'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body:`token=${profilToDisplay.token}&liste=${listePoints}&adresse=${adresse}&lnglat=${lnglat}`

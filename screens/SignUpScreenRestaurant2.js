@@ -5,7 +5,7 @@ import {Button} from 'react-native-elements';
 import { CheckBox } from 'react-native-elements';
 import MultiSelect from 'react-native-multiple-select';
 import HeaderBar from '../components/HeaderBar';
-import adresseIP from '../adresseIP';
+import url from '../url';
 import items from '../données/itemsRestaurants';
 
 function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
@@ -39,7 +39,7 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
       var prixConverti = 2
     }
     // Requête au backend permettant de mettre à jour les informations relatives au restaurant en base de données
-    var rawResponse = await fetch(`http://${adresseIP}:3000/restaurants/informations`, {
+    var rawResponse = await fetch(`http://${url}/restaurants/informations`, {
       method: 'PUT',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profilToDisplay.token}&clientele=${JSON.stringify(clientele)}&foodOption=${JSON.stringify(cuisine)}&restaurantOption=${JSON.stringify(ambiance)}&pricing=${prixConverti}`
