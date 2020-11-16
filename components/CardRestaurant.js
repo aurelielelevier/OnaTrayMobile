@@ -30,7 +30,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
 
     async function changementWishlist(){
         // requête vers le backend pour ajouter/supprimer les restaurants dans la wishlist
-        var rawresponse = await fetch(`http://${url}/talents/wishlist`, {
+        var rawresponse = await fetch(`${url}/talents/wishlist`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `token=${profilToDisplay.token}&id=${resto._id}`

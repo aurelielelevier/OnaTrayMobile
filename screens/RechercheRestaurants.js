@@ -8,6 +8,7 @@ import CardRestaurant from '../components/CardRestaurant';
 import { withNavigationFocus } from 'react-navigation';
 import url from '../url';
 import items from '../données/itemsRestaurants';
+import ModalLogout from '../components/ModalLogout';
 
 const ambiance = items.itemsAmbiance.map(item => item.name);
 const cuisine = items.itemsCuisine.map(item => item.name);
@@ -15,10 +16,6 @@ const prix = items.itemsPrix.map(item => item.id);
 const clientele = items.itemsClientele.map(item => item.name);
 
 function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
-
-  function logout(){
-    navigation.navigate('Home')
-  };
 
   const [liste, setListe] = useState([]);
   const [profil, setProfil] = useState(profilToDisplay);
@@ -29,7 +26,18 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
   const [selectedItemsPrix, setSelectedItemsPrix] = useState(prix);
   const [zone, setZone] = useState(items.zoneFrance);
   const [texteZone, setTexteZone] = useState('Uniquement dans mon périmètre');
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
+  function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
+    navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
+  };
+
   useEffect(()=>{
     if(isFocused){
       setProfil(profilToDisplay)
@@ -66,7 +74,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
   useEffect(() => {
     var criteres = JSON.stringify({ambiance: selectedItemsAmbiance, cuisine: selectedItemsCuisine, prix: selectedItemsPrix, type:selectedItemsClientele, zone:zone})
     async function cherche (){
-    var rawResponse = await fetch(`http://${url}/talents/recherche-liste-restaurants`, {
+    var rawResponse = await fetch(`${url}/talents/recherche-liste-restaurants`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profil.token}&restaurant=${criteres}`
@@ -102,6 +110,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
             justifyContent: 'space-around',
         }}
       />
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
 
       <Button 
         onPress={()=>{changeZone()}}

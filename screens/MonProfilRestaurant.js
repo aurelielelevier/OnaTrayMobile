@@ -5,16 +5,23 @@ import { Divider, ListItem, Overlay, Button, Image, Accessory} from 'react-nativ
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
 import HeaderBar from '../components/HeaderBar';
+import ModalLogout from '../components/ModalLogout';
 
 function MonProfilRestaurant({profilToDisplay, navigation}) {
 
   const[visible, setVisible] = useState(false);
   const [profil, setProfil] = useState(profilToDisplay);
   const[contenu, setContenu] = useState(<Text></Text>);
-  const [flexOverlay, setFlexOverlay] = useState(0.5);
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
   function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
     navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
   };
 
   const list = [
@@ -111,7 +118,6 @@ function MonProfilRestaurant({profilToDisplay, navigation}) {
           {listeDeDonnees[i]}
         </View>
       </View>
-    setFlexOverlay(0.5)
     setContenu(contenu)
   }
   
@@ -119,11 +125,12 @@ function MonProfilRestaurant({profilToDisplay, navigation}) {
     <Divider style={styles.container}>
 
       <HeaderBar page='Mon profil' logout={logout}/>
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
 
       {/* Overlay permettant l'affichage dynamique des informations selon la ligne de la liste choisie : */}
       <Overlay 
           isVisible={visible}
-          overlayStyle={{flex:flexOverlay, width:'90%'}}>
+          overlayStyle={{flex:0.5, width:'90%'}}>
         <View style={{flex:1}}>
           {contenu}
           <View style={{margin:20, width:50, alignSelf:'center'}}>

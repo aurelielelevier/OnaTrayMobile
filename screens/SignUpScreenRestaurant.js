@@ -5,6 +5,7 @@ import {Button, Overlay} from 'react-native-elements';
 import HeaderBar from '../components/HeaderBar';
 import url from '../url';
 import Autocomplete from 'react-native-autocomplete-input';
+import ModalLogout from '../components/ModalLogout';
 
 function SignUpScreenRestaurant ({navigation, onLogin}) {
   
@@ -21,9 +22,16 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
   const[adresse, setAdresse] = useState('');
   const[adressesProposees, setAdressesProposees] = useState([]);
   const [latlngDomicile, setLatlngDomicile] = useState({coordinates: [ 2.3488, 48.8534]});
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
   function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
     navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
   };
 
   useEffect(() => {
@@ -70,7 +78,7 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
     };
     
     if(validation){
-      var rawResponse = await fetch(`http://${url}/restaurants/createAccount`, {
+      var rawResponse = await fetch(`${url}/restaurants/createAccount`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `restaurantEmail=${valueEmail}&restaurantPassword=${valueMotDePasse}&restaurantSiret=${siret}&restaurantName=${nom}&phoneRestaurant=${telephone}&restaurantAdress=${adresse}&lnglat=${JSON.stringify(latlngDomicile)}&restaurantWebsite=${site}`
@@ -84,7 +92,8 @@ function SignUpScreenRestaurant ({navigation, onLogin}) {
   return (
     <View style={{flex:1}}>
       <HeaderBar page= 'Inscription' logout={logout}/>
-      
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
+
       <View style={{flex:1, alignItems:'center', paddingTop:10}}>
         
       <Overlay 

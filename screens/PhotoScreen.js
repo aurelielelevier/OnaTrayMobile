@@ -104,7 +104,7 @@ function PhotoScreen({profilToDisplay, onLogin, navigation}) {
                     name: `${profilToDisplay.token}photo.jpg`,
                   });
 
-                  var rawResponse = await fetch(`http://${url}/upload/${profilToDisplay.token}`, {
+                  var rawResponse = await fetch(`${url}/upload/${profilToDisplay.token}`, {
                     method: 'post',
                     body: data
                   })

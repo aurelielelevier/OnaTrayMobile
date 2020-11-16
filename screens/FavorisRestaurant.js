@@ -5,16 +5,24 @@ import HeaderBar from '../components/HeaderBar';
 import { withNavigationFocus } from 'react-navigation';
 import CardTalent from '../components/CardTalent';
 import url from '../url';
+import ModalLogout from '../components/ModalLogout';
 
 function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
 
-  function logout(){
-      navigation.navigate('Home')
-  };
-
   const [liste, setListe] = useState([]);
   const [profil, setProfil] = useState(profilToDisplay);
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
+  function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
+    navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
+  };
+
   useEffect(()=>{
     if(isFocused){
       setProfil(profilToDisplay)
@@ -24,7 +32,7 @@ function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
 
   useEffect(() => {
     async function cherche (){
-    var rawResponse = await fetch(`http://${url}/restaurants/affiche-whishlist/${profil.token}`)
+    var rawResponse = await fetch(`${url}/restaurants/affiche-whishlist/${profil.token}`)
     var response = await rawResponse.json()
     setListe(response)
     }
@@ -34,6 +42,7 @@ function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
   return (
     <View style={{flex:1}}>
       <HeaderBar page='Mes favoris' logout={logout}/>
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
       <View style={{flex:1}}>
         <ScrollView style={{marginTop: 20}}>
         {

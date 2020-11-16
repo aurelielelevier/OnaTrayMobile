@@ -16,7 +16,7 @@ function HomeScreen({navigation, onLogin}) {
 
   // Requête vers le backend pour voir si un utilisateur existe avec les identifiants email et mot de passe :
   async function signin() {
-    var rawResponse = await fetch(`http://${url}/sign_in`, {
+    var rawResponse = await fetch(`${url}/sign_in`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `email=${valueEmail}&password=${valueMotDePasse}`

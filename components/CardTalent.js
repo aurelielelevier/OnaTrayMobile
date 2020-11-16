@@ -54,7 +54,7 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
 
 async function changementWhishlist(){
   // requête vers le backend pour ajouter/supprimer le talent dans la wishlist
-    var rawresponse = await fetch(`http://${url}/restaurants/wishlist`, {
+    var rawresponse = await fetch(`${url}/restaurants/wishlist`, {
     method: 'POST',
     headers: {'Content-Type':'application/x-www-form-urlencoded'},
     body: `token=${profilToDisplay.token}&id=${talent._id}`

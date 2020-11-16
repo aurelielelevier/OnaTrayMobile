@@ -7,6 +7,7 @@ import MultiSelect from 'react-native-multiple-select';
 import HeaderBar from '../components/HeaderBar';
 import url from '../url';
 import items from '../données/itemsRestaurants';
+import ModalLogout from '../components/ModalLogout';
 
 function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
   
@@ -14,9 +15,16 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
   const [prix, setPrix] = useState([]);
   const [cuisine, setCuisine] = useState([]);
   const [ambiance, setAmbiance] = useState([]);
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
   function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
     navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
   };
 
   const onSelectedItemsClientele = (selectedItems) => {
@@ -39,7 +47,7 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
       var prixConverti = 2
     }
     // Requête au backend permettant de mettre à jour les informations relatives au restaurant en base de données
-    var rawResponse = await fetch(`http://${url}/restaurants/informations`, {
+    var rawResponse = await fetch(`${url}/restaurants/informations`, {
       method: 'PUT',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body: `token=${profilToDisplay.token}&clientele=${JSON.stringify(clientele)}&foodOption=${JSON.stringify(cuisine)}&restaurantOption=${JSON.stringify(ambiance)}&pricing=${prixConverti}`
@@ -53,6 +61,7 @@ function SignUpScreenRestaurant ({navigation, profilToDisplay, onLogin}) {
   return (
     <View style={{flex:1}}>
       <HeaderBar page= 'Inscription' logout={logout}/>
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
       
       <View style={{flex:1, alignItems:'center', paddingTop:10}}>
 

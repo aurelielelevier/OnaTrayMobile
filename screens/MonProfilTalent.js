@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react';
-import { StyleSheet, Text, View, ScrollView} from 'react-native';
+import { StyleSheet, Text, View, ScrollView, ActivityIndicator} from 'react-native';
 import {connect} from 'react-redux';
 import { Divider, Avatar, Accessory, ListItem, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -7,17 +7,25 @@ import { FontAwesome } from '@expo/vector-icons';
 import HeaderBar from '../components/HeaderBar';
 import Map from '../components/Map';
 import { withNavigationFocus } from 'react-navigation';
+import ModalLogout from '../components/ModalLogout';
 
 function MonProfil({profilToDisplay, navigation, isFocused}) {
-
-  function logout(){
-    navigation.navigate('Home')
-  };
 
   const[visible, setVisible] = useState(false);
   const [profil, setProfil] = useState(profilToDisplay);
   const[contenu, setContenu] = useState(<Text></Text>);
   const [flexOverlay, setFlexOverlay] = useState(0.5);
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
+  
+  function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
+    navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
+  };
   
   useEffect(()=>{
     if(isFocused){
@@ -126,6 +134,7 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
     <Divider style={styles.container}>
 
       <HeaderBar page='Mon profil' logout={logout}/>
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
 
       <Overlay 
           isVisible={visible}
@@ -149,6 +158,7 @@ function MonProfil({profilToDisplay, navigation, isFocused}) {
           source={{
               uri:profil.avatar,
           }}
+          renderPlaceholderContent={<ActivityIndicator/>}
         >
           <Accessory style={{width:40, height:40, borderRadius:50 }}
                     onPress={()=>{navigation.navigate('PhotoScreen')}}/>

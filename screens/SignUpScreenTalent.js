@@ -38,7 +38,7 @@ function SignUpScreenTalent ({navigation, onLogin }) {
     
     if(validation){
       // requête au backent pour enregistrer un nouvel utilisateur
-      var rawResponse = await fetch(`http://${url}/talents/createAccount`, {
+      var rawResponse = await fetch(`${url}/talents/createAccount`, {
         method: 'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `email=${valueEmail}&password=${valueMotDePasse}&firstName=${prenom}&lastName=${nom}&phone=${telephone}`

@@ -7,16 +7,13 @@ import CardTalent from '../components/CardTalent';
 import { withNavigationFocus } from 'react-navigation';
 import url from '../url';
 import items from '../données/itemsTalents';
+import ModalLogout from '../components/ModalLogout';
 
 //récupération des données métiers et contrats et création d'un tableau 
 const metiers = items.itemsPostes.map(item=> item.name);
 const contrats = items.itemsContrats.map(item=> item.name);
 
 function RechercheTalents({profilToDisplay, isFocused, navigation}) {
-
-  function logout(){
-    navigation.navigate('Home')
-  };
 
   const [profil, setProfil] = useState(profilToDisplay);
   const [choixContrat, setChoixContrat] = useState('CDI');
@@ -25,7 +22,18 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
   const [typedecontrat,settypedecontrat]=useState(contrats);
   const [rechercheeffectuée,setrechercheeffectuée]=useState(false);
   const [liste, setListe] = useState([]);
+  const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
+  function logout(){
+    setModalLogoutVisible(true)
+  };
+  function deconnect(){
+    navigation.navigate('Home')
+  };
+  function fermeModal(){
+    setModalLogoutVisible(false)
+  };
+
   useEffect(()=>{
     //rechargement du profil à chaque fois que la page est affichée (a pu être modifié sur une autre page)
     if(isFocused){
@@ -40,7 +48,7 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
     // - qui peuvent répondre au métier dont le restaurateur a besoin
     async function cherche(){
     var criteres = JSON.stringify({posterecherché: metier, typedecontrat:choixContrat})
-    var rechercheListe = await fetch(`http://${url}/restaurants/recherche-liste-talents`, {
+    var rechercheListe = await fetch(`${url}/restaurants/recherche-liste-talents`, {
         method:'POST',
         headers: {'Content-Type':'application/x-www-form-urlencoded'},
         body: `token=${profil.token}&criteres=${criteres}`
@@ -57,7 +65,8 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
     <View style={{flex:1}}>
 
       <HeaderBar page='Recherche de talents' logout={logout}/>
-
+      <ModalLogout visible={modalLogoutVisible} deconnect={deconnect} fermeModal={fermeModal}/>
+      
       <View style={{flex:1}}>
         <Text style={styles.titre}>Je cherche un(e) :</Text>
         <Picker
