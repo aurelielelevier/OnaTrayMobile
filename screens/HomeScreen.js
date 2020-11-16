@@ -58,7 +58,7 @@ function HomeScreen({navigation, onLogin}) {
           >
             <View style={styles.centeredView}>
               <View style={styles.modalView}>
-                <Text style={styles.modalText}>Veuillez entrer votre Email et vote mot de passe</Text>
+                <Text style={styles.modalText}>Veuillez entrer votre email et votre mot de passe</Text>
           
                   <View style={{flexDirection:'row'}}>
                     <Icon
