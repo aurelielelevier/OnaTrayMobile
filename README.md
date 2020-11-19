@@ -5,7 +5,7 @@ Ils ne seront mis en contact qu’avec des personnes qui acceptent de travailler
 
 Screenshot vue des restaurants :
 
-![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824540/IMG_7156_zo48nh.png)  ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824496/IMG_7155_enzrrd.png) 
+![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824540/IMG_7156_zo48nh.png)  ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824496/IMG_7155_enzrrd.png)  ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605825198/IMG_7160_pxrbko.png)
 
 Screenshot vue des talents :
 
