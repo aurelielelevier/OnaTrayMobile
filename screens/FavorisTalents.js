@@ -10,7 +10,7 @@ import ModalLogout from '../components/ModalLogout';
 function FavorisTalents({profilToDisplay,navigation, isFocused}) {
 
   const [liste, setListe] = useState([]);
-  const [profil, setProfil] = useState(profilToDisplay);
+  //const [profil, setProfil] = useState(profilToDisplay);
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
   
   function logout(){
@@ -25,18 +25,25 @@ function FavorisTalents({profilToDisplay,navigation, isFocused}) {
   
   useEffect(()=>{
     if(isFocused){
-      setProfil(profilToDisplay)
+      async function cherche (){
+        var rawResponse = await fetch(`${url}/talents/affiche-whishlist/${profilToDisplay.token}`)
+        var response = await rawResponse.json()
+        console.log(response.length, 'response.length')
+        setListe(response)
+        }
+        cherche()
     }
-  },[isFocused]);
+  },[isFocused, profilToDisplay]);
  
-  useEffect(() => {
-    async function cherche (){
-    var rawResponse = await fetch(`${url}/talents/affiche-whishlist/${profil.token}`)
-    var response = await rawResponse.json()
-    setListe(response)
-    }
-    cherche()
-  }, [profil]);
+  // useEffect(() => {
+  //   async function cherche (){
+  //   var rawResponse = await fetch(`${url}/talents/affiche-whishlist/${profilToDisplay.token}`)
+  //   var response = await rawResponse.json()
+  //   console.log(response.length, 'response.length')
+  //   setListe(response)
+  //   }
+  //   cherche()
+  // }, [profilToDisplay]);
 
   return (
     

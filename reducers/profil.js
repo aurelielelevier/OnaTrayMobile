@@ -4,6 +4,6 @@ export default function(profil={},action){
         return action.profil
     }
     else{
-        return profil 
+        return profil  
     }
 }

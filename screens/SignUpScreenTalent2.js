@@ -57,6 +57,7 @@ function SignUpScreenTalent2 ({navigation, profilToDisplay, onLogin}) {
     })
     var profilAjour = await rawResponse.json()
     // Mise à jour dans le store du profil avec les nouvelles données enregistrées
+    console.log(profilAjour)
     onLogin(profilAjour)
   };
 

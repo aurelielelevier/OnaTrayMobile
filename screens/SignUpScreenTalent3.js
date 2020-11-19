@@ -54,7 +54,6 @@ function SignUpScreenTalent3 ({navigation, onLogin, profilToDisplay}) {
         }
       } 
       autocompletion()
-      console.log(adresse)
     }, [adresse])
 
 
@@ -69,7 +68,7 @@ function SignUpScreenTalent3 ({navigation, onLogin, profilToDisplay}) {
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
       body:`token=${profilToDisplay.token}&liste=${listePoints}&adresse=${adresse}&lnglat=${lnglat}`
     })
-    var profilAJour = rawResponse.json()
+    var profilAJour = await rawResponse.json()
     // Mise à jour dans le store du profil avec les nouvelles données enregistrées:
     onLogin(profilAJour)
   };
