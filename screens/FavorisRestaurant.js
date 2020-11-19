@@ -7,11 +7,12 @@ import CardTalent from '../components/CardTalent';
 import url from '../url';
 import ModalLogout from '../components/ModalLogout';
 
-function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
+function FavorisRestaurants({isFocused, navigation, profilToDisplay, onChangeProfil}) {
 
   const [liste, setListe] = useState([]);
   const [profil, setProfil] = useState(profilToDisplay);
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
+  const [tableau, setTableau] = useState(profilToDisplay.wishlistRestaurant.map(talent=>talent._id));
   
   function logout(){
     setModalLogoutVisible(true)
@@ -27,6 +28,7 @@ function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
     if(isFocused){
       setProfil(profilToDisplay)
       setListe(profilToDisplay.wishlistRestaurant)
+      setTableau(profilToDisplay.wishlistRestaurant.map(talent=>talent._id))
     }
   },[isFocused]);
 
@@ -38,6 +40,23 @@ function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
     }
     cherche()
   }, [profil]);
+
+  async function onChangeWishlist(idTalent){
+    // requête vers le backend pour ajouter/supprimer le talent dans la wishlist
+      var rawresponse = await fetch(`${url}/restaurants/wishlist`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: `token=${profilToDisplay.token}&id=${idTalent}`
+      })
+      var response = await rawresponse.json()
+      // mise à jour du profil restaurant avec nouvelles données de wishlist
+
+      onChangeProfil(response.profil)
+      setListe(response.profil.wishlistRestaurant)
+      setProfil(response.profil)
+      setTableau(response.profil.wishlistRestaurant.map(talent=>talent._id))
+      onChangeWishlist(response.profil.wishlistRestaurant)
+};
   
   return (
     <View style={{flex:1}}>
@@ -47,8 +66,13 @@ function FavorisRestaurants({isFocused, navigation, profilToDisplay}) {
         <ScrollView style={{marginTop: 20}}>
         {
           liste.map((talent,i)=> {
+            if(tableau.includes(talent._id)){
+              var coeur = 'heart'
+            } else {
+              var coeur = 'heart-o'
+            }
             return(
-              <CardTalent key={`${talent}${i}`} talent={talent}/>
+              <CardTalent key={`${talent}${i}`} talent={talent} coeur={coeur} onChangeWishlist={onChangeWishlist}/>
             )
           })
          }
@@ -79,12 +103,20 @@ const styles = StyleSheet.create({
   }
 });
 
+function mapDispatchToProps (dispatch) {
+  return {
+      onChangeProfil: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+  }
+};
+
 function mapStateToProps(state) {
     return { profilToDisplay : state.profil }
 };
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(withNavigationFocus(FavorisRestaurants));
 

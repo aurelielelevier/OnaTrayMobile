@@ -13,7 +13,7 @@ import ModalLogout from '../components/ModalLogout';
 const metiers = items.itemsPostes.map(item=> item.name);
 const contrats = items.itemsContrats.map(item=> item.name);
 
-function RechercheTalents({profilToDisplay, isFocused, navigation}) {
+function RechercheTalents({profilToDisplay, isFocused, navigation, onChangeProfil}) {
 
   const [profil, setProfil] = useState(profilToDisplay);
   const [choixContrat, setChoixContrat] = useState('CDI');
@@ -23,6 +23,7 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
   const [rechercheeffectuée,setrechercheeffectuée]=useState(false);
   const [liste, setListe] = useState([]);
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
+  const [tableau, setTableau] = useState(profilToDisplay.wishlistRestaurant.map(talent=>talent._id));
   
   function logout(){
     setModalLogoutVisible(true)
@@ -40,7 +41,7 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
       setProfil(profilToDisplay)
     }
   },[isFocused]);
-  
+
   useEffect(()=> {
     // requête permettant d'interroger le backend et de renvoyer la liste des talents
     // - dont la zone de recherche d'emploi comprend l'adresse du restaurant
@@ -60,7 +61,21 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
     cherche()
   },[metier,choixContrat]);
 
-  
+  async function onChangeWishlist(idTalent){
+    // requête vers le backend pour ajouter/supprimer le talent dans la wishlist
+      var rawresponse = await fetch(`${url}/restaurants/wishlist`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded'},
+      body: `token=${profilToDisplay.token}&id=${idTalent}`
+      })
+      var response = await rawresponse.json()
+      // mise à jour du profil restaurant avec nouvelles données de wishlist
+      onChangeProfil(response.profil)
+      setProfil(response.profil)
+      setTableau(response.profil.wishlistRestaurant.map(talent=>talent._id))
+      onChangeWishlist(response.profil.wishlistRestaurant)
+  };
+
   return (
     <View style={{flex:1}}>
 
@@ -115,8 +130,13 @@ function RechercheTalents({profilToDisplay, isFocused, navigation}) {
         <ScrollView>
         {
           liste.map((talent,i)=> {
+            if(tableau.includes(talent._id)){
+              var coeur = 'heart'
+            } else {
+              var coeur = 'heart-o'
+            }
             return(
-              <CardTalent key={`${talent}${i}`} talent={talent} inwishlit={true}/>
+              <CardTalent key={`${talent}${i}`} talent={talent} coeur={coeur} onChangeWishlist={onChangeWishlist}/>
             )
           })
          }
@@ -151,6 +171,13 @@ const styles = StyleSheet.create({
   }
 });
 
+function mapDispatchToProps (dispatch) {
+  return {
+      onChangeProfil: function(profil){
+          dispatch({type:'addProfil', profil:profil})
+      }
+  }
+};
 
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
@@ -158,5 +185,5 @@ function mapStateToProps(state) {
 
 export default connect(
   mapStateToProps, 
-  null
+  mapDispatchToProps
 )(withNavigationFocus(RechercheTalents));

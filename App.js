@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { AntDesign } from '@expo/vector-icons'; 
+import { FontAwesome } from '@expo/vector-icons';
 
 import HomeScreen from './screens/HomeScreen';
 import MonProfilTalent from './screens/MonProfilTalent';
@@ -41,18 +41,18 @@ var BottomNavigatorTalent = createBottomTabNavigator({
       if (navigation.state.routeName == 'Mon Profil') {
         iconName = 'user';
       } else if (navigation.state.routeName == 'Restaurants') {
-        iconName = 'search1';
+        iconName = 'search';
       } else if (navigation.state.routeName == 'Favoris') {
         iconName = 'heart';
       }
 
-      return <AntDesign name={iconName} size={25} color={tintColor} />;
+      return <FontAwesome name={iconName} size={25} color={tintColor} />;
     },
   }),
   
   tabBarOptions: {
-    activeTintColor: '#fc5c65',
-    inactiveTintColor: '#4b6584',
+    activeTintColor: '#4b6584',
+    inactiveTintColor: '#778ca3',
     style: {
       backgroundColor: '#fed330',
     }
@@ -73,19 +73,19 @@ var BottomNavigatorRestaurant = createBottomTabNavigator({
       if (navigation.state.routeName == 'Mon Profil') {
         iconName = 'user';
       } else if (navigation.state.routeName == 'Talents') {
-        iconName = 'search1';
+        iconName = 'search';
       } else if (navigation.state.routeName == 'Mes favoris') {
-        iconName = 'hearto';
+        iconName = 'heart';
       } 
 
-      return <AntDesign name={iconName} size={25} color={tintColor} />;
+      return <FontAwesome name={iconName} size={25} color={tintColor} />;
     },
     
   }),
   
   tabBarOptions: {
-    activeTintColor: '#fc5c65',
-    inactiveTintColor: '#4b6584',
+    activeTintColor: '#4b6584',
+    inactiveTintColor: '#778ca3',
   
     style: {
       backgroundColor: '#fed330',

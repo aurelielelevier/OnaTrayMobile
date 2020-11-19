@@ -1,23 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Linking, StyleSheet, ScrollView, Text, View} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { FontAwesome } from '@expo/vector-icons';
-import {connect} from 'react-redux';
 import {Button, Overlay, Avatar, Divider, Badge} from 'react-native-elements';
-import url from '../url';
 
-function CardTalent({profilToDisplay, talent, onChangeProfil}) {
+function CardTalent({talent, onChangeWishlist, coeur}) {
   
-  const [inwishlist, setInWishlist] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [profil, setProfil] = useState(profilToDisplay);
-  const [tableau, setTabelau] = useState(profilToDisplay.wishlistRestaurant.map(talent=>talent._id));
-  
-  useEffect(()=>{
-    if(tableau.includes(talent._id)) {
-      setInWishlist(true)
-    }
-  },[tableau, profil]);
 
   const langues = talent.speakLangage.map((langue,i)=>{
     return(
@@ -51,20 +40,6 @@ function CardTalent({profilToDisplay, talent, onChangeProfil}) {
 } else {
     var dispo = <FontAwesome name="square-o" size={15} color="#4b6584" />
 }
-
-async function changementWhishlist(){
-  // requête vers le backend pour ajouter/supprimer le talent dans la wishlist
-    var rawresponse = await fetch(`${url}/restaurants/wishlist`, {
-    method: 'POST',
-    headers: {'Content-Type':'application/x-www-form-urlencoded'},
-    body: `token=${profilToDisplay.token}&id=${talent._id}`
-    })
-    var response = await rawresponse.json()
-    // mise à jour du profil restaurant avec nouvelles données de wishlist
-    onChangeProfil(response.profil)
-    setProfil(response.profil)
-    setInWishlist(!inwishlist)
-};
 
   return ( 
       <View>
@@ -267,12 +242,12 @@ async function changementWhishlist(){
 
             <View style={{paddingRight:1}}> 
                 <Icon
-                    name={inwishlist?'heart':'heart-o'}
+                    name={coeur}
                     size={24}
                     color='#4b6584'
                     style={{marginRight:70}}
                     onPress={()=>{{
-                      changementWhishlist()}}}
+                      onChangeWishlist(talent._id)}}}
                 />
             </View>
           </View>
@@ -347,19 +322,5 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapDispatchToProps (dispatch) {
-    return {
-        onChangeProfil: function(profil){
-            dispatch({type:'addProfil', profil:profil})
-        }
-    }
-};
 
-function mapStateToProps(state) {
-  return { profilToDisplay : state.profil }
-};
-
-export default connect(
-  mapStateToProps, 
-  mapDispatchToProps
-)(CardTalent);
+export default CardTalent;

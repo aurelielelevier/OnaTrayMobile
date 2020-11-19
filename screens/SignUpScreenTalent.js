@@ -203,11 +203,8 @@ function mapDispatchToProps (dispatch) {
   }
 };
 
-function mapStateToProps(state) {
-  return { profilToDisplay: state.profil, pseudoToDisplay: state.pseudo}
-};
 
 export default connect(
-  mapStateToProps, 
+  null, 
   mapDispatchToProps
 )(SignUpScreenTalent);
