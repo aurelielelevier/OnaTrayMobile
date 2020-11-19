@@ -7,46 +7,13 @@ import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
 import url from '../url';
 
-function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
+function CardRestaurant({profilToDisplay, resto, coeur, changementWishlist}) {
 
-    const [wishlist, setWishlist] = useState(profilToDisplay.wishlistTalent);
-    const [coeur, setCoeur] = useState(isInWishlist());
     const [visible, setVisible] = useState(false);
-
-    function isInWishlist(){
-        var result = 'heart-o'
-        for(var i=0; i<wishlist.length; i++){
-            if(wishlist[i]._id === resto._id){
-                result = 'heart'
-            }
-        }
-        return result
-    };
 
     const polygone = []
     for(var i=0; i<profilToDisplay.perimetre.length; i++){
         polygone.push({latitude:profilToDisplay.perimetre[i][1], longitude:profilToDisplay.perimetre[i][0]})
-    };
-
-    async function changementWishlist(){
-        // requête vers le backend pour ajouter/supprimer les restaurants dans la wishlist
-        var rawresponse = await fetch(`${url}/talents/wishlist`, {
-        method: 'POST',
-        headers: {'Content-Type':'application/x-www-form-urlencoded'},
-        body: `token=${profilToDisplay.token}&id=${resto._id}`
-        })  
-        var response = await rawresponse.json()
-        // mise à jour du profil talent avec nouvelles données de wishlist
-        onChangeProfil(response.profil)
-        setWishlist(response.profil.wishlistTalent)
-    };
-
-    function changementCoeur(coeur){
-        if(coeur ==='heart'){
-            return('heart-o')
-        } else {
-            return('heart')
-        }
     };
 
     // préparation des données pour leur affichage :
@@ -368,57 +335,6 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                     </View>
                 </View>
                 
-                {/* <View style={{  flex: 4}} >
-                <View style={{flexDirection:'row'}}>
-                        <View>
-                            <Badge
-                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
-                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
-                                value={<Icon
-                                    name='cutlery'
-                                    size={14}
-                                    color='#4b6584'
-                                />}
-                            /> 
-                        </View>
-                        <Text style={styles.desciptif}>
-                        {` ${cuisine}`}
-                        </Text>
-                    </View>
-                    <View style={{flexDirection:'row'}}>
-                        <View>
-                            <Badge
-                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
-                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
-                                value={<Icon
-                                    name='users'
-                                    size={14}
-                                    color='#4b6584'
-                                />}
-                            /> 
-                        </View>
-                        <Text style={styles.desciptif}>
-                        {` ${clientele}`}
-                        </Text>
-                    </View>
-                    <View style={{flexDirection:'row'}}>
-                        <View>
-                            <Badge
-                                badgeStyle={{backgroundColor:'#fed330', borderWidth:'none', alignItems:'center'}}
-                                containerStyle={{alignItems:'center', justifyContent:'center', textAlign:'center'}}
-                                value={<Icon
-                                    name='info-circle'
-                                    size={14}
-                                    color='#4b6584'
-                                />}
-                            /> 
-                        </View>
-                        <Text style={styles.desciptif}>
-                        {` ${ambiance}`}
-                        </Text>
-                    </View>
-                </View> */}
-
                 <View style={{  flex: 2}} >
                     <Text style={{...styles.desciptif}, {textAlign:'center'}}>{prix}</Text>
                     <Icon
@@ -426,7 +342,7 @@ function CardRestaurant({profilToDisplay, resto, onChangeProfil}) {
                         size={24}
                         color='#4b6584'
                         style={{margin:10, textAlign:'center'}}
-                        onPress={()=>{{setCoeur(changementCoeur(coeur)); changementWishlist()}}}
+                        onPress={()=>{{changementWishlist(resto._id)}}}
                     />
                 </View>
                 </View>
@@ -496,19 +412,11 @@ const styles = StyleSheet.create({
   },
 });
 
-function mapDispatchToProps (dispatch) {
-    return {
-        onChangeProfil: function(profil){
-            dispatch({type:'addProfil', profil:profil})
-        }
-    }
-};
-
 function mapStateToProps(state) {
   return { profilToDisplay : state.profil }
 };
 
 export default connect(
   mapStateToProps, 
-  mapDispatchToProps
+  null
 )(CardRestaurant);

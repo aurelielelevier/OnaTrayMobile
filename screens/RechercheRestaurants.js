@@ -27,6 +27,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
   const [zone, setZone] = useState(items.zoneFrance);
   const [texteZone, setTexteZone] = useState('Uniquement dans mon périmètre');
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
+  const [tableau, setTableau] = useState(profilToDisplay.wishlistTalent.map(item=>item._id))
   
   function logout(){
     setModalLogoutVisible(true)
@@ -86,6 +87,18 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
     cherche()
   }, [selectedItemsClientele, selectedItemsAmbiance, selectedItemsCuisine, selectedItemsPrix, zone]);
   
+  async function changementWishlist(idRestaurant){
+    // requête vers le backend pour ajouter/supprimer les restaurants dans la wishlist
+    var rawresponse = await fetch(`${url}/talents/wishlist`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/x-www-form-urlencoded'},
+    body: `token=${profilToDisplay.token}&id=${idRestaurant}`
+    })  
+    var response = await rawresponse.json()
+    // mise à jour du profil talent avec nouvelles données de wishlist
+    onChangeProfil(response.profil)
+    setTableau(response.profil.wishlistTalent.map(item=>item._id))
+};
 
   return (
     <View style={{flex:1}} >
@@ -252,8 +265,13 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
       <ScrollView style={{flex: 1, marginTop: 10, marginBottom:10}}>
         {
         liste.map((resto,i)=> {
+          if(tableau.includes(resto._id)){
+            var coeur ='heart'
+          } else {
+            var coeur = 'heart-o'
+          }
           return(
-            <CardRestaurant key={`${resto}${i}`} resto={resto}/>
+            <CardRestaurant key={resto+i} resto={resto} coeur={coeur} changementWishlist={changementWishlist}/>
           )
         })
         }
