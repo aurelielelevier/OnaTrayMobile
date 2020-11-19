@@ -8,4 +8,6 @@ Screenshot vue des restaurants :
 ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824540/IMG_7156_zo48nh.png)  ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824496/IMG_7155_enzrrd.png) 
 
 Screenshot vue des talents :
+
+
 ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824512/IMG_7159_yjrgv1.png)  ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824542/IMG_7158_qigdlc.png)   ![alt text](https://res.cloudinary.com/dpyqb49ha/image/upload/c_scale,w_230/v1605824527/IMG_7157_exhyud.png)
