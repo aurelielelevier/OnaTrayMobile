@@ -67,7 +67,7 @@ function CardRestaurant({profilToDisplay, resto, coeur, changementWishlist}) {
     };
     
   return (
-      <View>
+      <View style={{flex:1}}>
           <Overlay 
                 isVisible={visible}
                 overlayStyle={{flex:0.9, width:'90%'}}

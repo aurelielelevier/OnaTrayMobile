@@ -62,27 +62,25 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
   };
 
   function changeZone(){
-    if(texteZone === 'Uniquement dans mon périmètre'){
+    if(texteZone == 'Uniquement dans mon périmètre'){
       setZone(profilToDisplay.perimetre)
       setTexteZone('Montrer tous les restaurants')
-    } else {
-      setTexteZone('Uniquement dans mon périmètre')
+    } else if (texteZone == 'Montrer tous les restaurants'){
       setZone(items.zoneFrance)
+      setTexteZone('Uniquement dans mon périmètre')
     }
   };
  
 
   useEffect(() => {
-    var criteres = JSON.stringify({ambiance: selectedItemsAmbiance, cuisine: selectedItemsCuisine, prix: selectedItemsPrix, type:selectedItemsClientele, zone:zone})
     async function cherche (){
     var rawResponse = await fetch(`${url}/talents/recherche-liste-restaurants`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: `token=${profilToDisplay.token}&restaurant=${criteres}`
+      body: `token=${profilToDisplay.token}&restaurant=${JSON.stringify({ambiance: selectedItemsAmbiance, cuisine: selectedItemsCuisine, prix: selectedItemsPrix, type:selectedItemsClientele, zone:zone})}`
     })
     var response = await rawResponse.json()
     setListe(response.liste)
-    onChangeProfil(response.profil)
     }
     cherche()
   }, [selectedItemsClientele, selectedItemsAmbiance, selectedItemsCuisine, selectedItemsPrix, zone]);
@@ -262,7 +260,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
         </>
       </Overlay>
      
-      <ScrollView style={{flex: 1, marginTop: 10, marginBottom:10}}>
+      <ScrollView style={{ flex: 1, marginTop: 10, marginBottom:10}}>
         {
           liste.map((resto,i)=> {
             if(tableau.includes(resto._id)){
@@ -271,7 +269,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
               var coeur = 'heart-o'
             }
             return(
-              <CardRestaurant key={resto.name+i} resto={resto} coeur={coeur} changementWishlist={changementWishlist}/>
+              <CardRestaurant key={i} resto={resto} coeur={coeur} changementWishlist={changementWishlist}/>
             )
           })
         }

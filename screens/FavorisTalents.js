@@ -11,7 +11,6 @@ function FavorisTalents({profilToDisplay,navigation, isFocused, onChangeProfil})
 
   const [liste, setListe] = useState(profilToDisplay.wishlistTalent);
   const [modalLogoutVisible, setModalLogoutVisible] = useState(false);
-  const [tableau, setTableau] = useState(profilToDisplay.wishlistTalent.map(item=>item._id))
   
   function logout(){
     setModalLogoutVisible(true)
@@ -26,7 +25,7 @@ function FavorisTalents({profilToDisplay,navigation, isFocused, onChangeProfil})
   useEffect(()=>{
     if(isFocused){
       setListe(profilToDisplay.wishlistTalent)
-      setTableau(profilToDisplay.wishlistTalent.map(item=>item._id))
+      
     }
   },[isFocused, profilToDisplay]);
 
