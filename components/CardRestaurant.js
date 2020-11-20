@@ -5,7 +5,6 @@ import {connect} from 'react-redux';
 import { Button, Overlay, Badge } from 'react-native-elements';
 import MapView from 'react-native-maps';
 import {Marker, Polygon} from 'react-native-maps';
-import url from '../url';
 
 function CardRestaurant({profilToDisplay, resto, coeur, changementWishlist}) {
 

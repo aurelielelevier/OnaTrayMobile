@@ -18,7 +18,6 @@ const clientele = items.itemsClientele.map(item => item.name);
 function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
 
   const [liste, setListe] = useState([]);
-  const [profil, setProfil] = useState(profilToDisplay);
   const [visibleModal, setVisibleModal] = useState(false);
   const [selectedItemsClientele, setSelectedItemsClientele] = useState(clientele);
   const [selectedItemsAmbiance, setSelectedItemsAmbiance] = useState(ambiance);
@@ -41,7 +40,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
 
   useEffect(()=>{
     if(isFocused){
-      setProfil(profilToDisplay)
+      setTableau(profilToDisplay.wishlistTalent.map(item=>item._id))
     }
   },[isFocused]);
 
@@ -64,13 +63,14 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
 
   function changeZone(){
     if(texteZone === 'Uniquement dans mon périmètre'){
-      setZone(profil.polygone.coordinates[0])
+      setZone(profilToDisplay.perimetre)
       setTexteZone('Montrer tous les restaurants')
     } else {
       setTexteZone('Uniquement dans mon périmètre')
       setZone(items.zoneFrance)
     }
   };
+ 
 
   useEffect(() => {
     var criteres = JSON.stringify({ambiance: selectedItemsAmbiance, cuisine: selectedItemsCuisine, prix: selectedItemsPrix, type:selectedItemsClientele, zone:zone})
@@ -78,7 +78,7 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
     var rawResponse = await fetch(`${url}/talents/recherche-liste-restaurants`, {
       method: 'POST',
       headers: {'Content-Type':'application/x-www-form-urlencoded'},
-      body: `token=${profil.token}&restaurant=${criteres}`
+      body: `token=${profilToDisplay.token}&restaurant=${criteres}`
     })
     var response = await rawResponse.json()
     setListe(response.liste)
@@ -264,16 +264,16 @@ function Recherche({onChangeProfil, profilToDisplay, navigation, isFocused}) {
      
       <ScrollView style={{flex: 1, marginTop: 10, marginBottom:10}}>
         {
-        liste.map((resto,i)=> {
-          if(tableau.includes(resto._id)){
-            var coeur ='heart'
-          } else {
-            var coeur = 'heart-o'
-          }
-          return(
-            <CardRestaurant key={resto+i} resto={resto} coeur={coeur} changementWishlist={changementWishlist}/>
-          )
-        })
+          liste.map((resto,i)=> {
+            if(tableau.includes(resto._id)){
+              var coeur ='heart'
+            } else {
+              var coeur = 'heart-o'
+            }
+            return(
+              <CardRestaurant key={resto.name+i} resto={resto} coeur={coeur} changementWishlist={changementWishlist}/>
+            )
+          })
         }
       </ScrollView>
     </View>
